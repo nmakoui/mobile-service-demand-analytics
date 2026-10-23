@@ -26,6 +26,26 @@ tech = pd.read_parquet(PROCESSED / "tech_raw.parquet")
 terr = pd.read_parquet(PROCESSED / "terr_raw.parquet")
 print(f"loaded  sa={len(sa):,}  tech={len(tech):,}  terr={len(terr):,}")
 
+# --- Audit lead-time values before numeric conversion -----------------
+# Distinguish missing values already present in sa_raw.parquet
+# from non-missing values that fail numeric conversion.
+
+lead_input = sa["Lead Time"]
+
+lead_blank = (
+    lead_input.isna()
+    | lead_input.astype("string").str.strip().eq("").fillna(False)
+)
+
+lead_numeric = pd.to_numeric(lead_input, errors="coerce")
+
+sa["lead_time_missing_in_input"] = lead_blank.astype(bool)
+
+sa["lead_time_parse_error"] = (
+    ~sa["lead_time_missing_in_input"]
+    & lead_numeric.isna()
+)
+
 # %%
 # --- Excel serial numbers -> real dates -------------------------------
 # Excel counts days from 1899-12-30. 45569.54 is not a quantity,
@@ -176,6 +196,25 @@ sa["effective_date"] = (
     .fillna(sa["SchedStartTime"])
     .dt.normalize()
 )
+
+# Record which timestamp supplied each appointment date.
+# This is important because fallback dates are not equivalent
+# to an explicitly recorded Appointment Date.
+
+sa["effective_date_source"] = np.select(
+    [
+        sa["Appointment Date"].notna(),
+        sa["Actual Start"].notna(),
+        sa["SchedStartTime"].notna(),
+    ],
+    [
+        "Appointment Date",
+        "Actual Start",
+        "SchedStartTime",
+    ],
+    default="Unavailable",
+)
+
 recovered = int(sa["Appointment Date"].isna().sum() - sa["effective_date"].isna().sum())
 record(
     "Appointment Date missing",
@@ -184,14 +223,16 @@ record(
     f"95.7% of Inspect & Fit jobs vs 0% of tyre fittings. {recovered} recovered.",
 )
 
-WINDOW_START = pd.Timestamp("2024-10-01")
-WINDOW_END = pd.Timestamp("2024-12-31")
+WINDOW_START = pd.Timestamp("2024-10-08")
+WINDOW_END = pd.Timestamp("2024-12-22")
 sa["in_demand_window"] = sa["effective_date"].between(WINDOW_START, WINDOW_END)
 record(
-    "Dated outside Oct-Dec 2024",
+    "Dated outside 8 Oct-22 Dec 2024",
     "Flagged, excluded from demand only",
     int((~sa["in_demand_window"]).sum()),
-    "Created-date cohort. Outcome analysis still uses all rows.",
+    "Window trimmed from both ends to avoid Created-Date censoring: the first/last "
+    "few days of the raw window were undercounted because the extract filters on "
+    "Created Date, not appointment date."
 )
 
 # 5. DurationType says 'Hours' but the values are already minutes.
@@ -264,12 +305,15 @@ sa = sa.merge(
 sa = sa.merge(
     terr.rename(columns={
         "Territory1": "customer_territory",
-        "Region": "region",
         "Restricted Territory name": "territory_restriction",
     }),
     on="District",
     how="left",
 )
+sa["region"] = "Group " + sa["customer_territory"].str.extract(r"^G(\d+)-")[0]
+unmatched = sa["customer_territory"].notna() & sa["region"].isna()
+print(f"customer_territory not matching G<N>- prefix: {unmatched.sum()}")
+print(sa.loc[unmatched, "customer_territory"].value_counts().head(10))
 
 assert len(sa) == before, f"join changed row count: {before} -> {len(sa)}"
 print(f"joined, still {len(sa):,} rows")
@@ -314,8 +358,22 @@ FAILURE_OWNER = {
 sa["failure_owner"] = sa["Sub_Categories__c"].map(FAILURE_OWNER)
 sa.loc[sa["failed"] & sa["failure_owner"].isna(), "failure_owner"] = "Not recorded"
 
-# Did the technician work their own patch?
-sa["own_territory"] = sa["tech_territory"] == sa["customer_territory"]
+
+# --- Own-territory assignment -----------------------------------------
+# Compare customer territory with technician home territory.
+# Missing assignments should remain unknown, not False.
+
+sa["own_territory_known"] = (
+    sa["tech_territory"].notna()
+    & sa["customer_territory"].notna()
+)
+
+sa["own_territory"] = (
+    sa["tech_territory"]
+    .eq(sa["customer_territory"])
+    .astype("boolean")
+    .where(sa["own_territory_known"], pd.NA)
+)
 
 # Demand booked into an area the business suspended.
 sa["suspended_district"] = sa["territory_restriction"] == "Suspended"
@@ -329,6 +387,118 @@ sa["lead_band"] = pd.cut(
 sa["slot_hour"] = sa["Booked Slot Start Time"].dt.hour
 
 sa["planned_minutes"] = sa["DurationInMinutes"]
+
+# --- Final data-quality audit -----------------------------------------
+# Audit only the operational appointment population.
+
+audit = sa.loc[
+    ~sa["is_placeholder"] & sa["in_demand_window"]
+].copy()
+
+missing_band = audit["lead_band"].isna()
+
+outside_bins = (
+    audit["Lead Time"].notna()
+    & audit["lead_band"].isna()
+)
+
+missing_in_input = int(
+    audit.loc[
+        missing_band, "lead_time_missing_in_input"
+    ].sum()
+)
+
+parse_errors = int(
+    audit.loc[
+        missing_band, "lead_time_parse_error"
+    ].sum()
+)
+
+outside_count = int(outside_bins.sum())
+
+print("\n" + "=" * 80)
+print("FINAL CLEANING AUDIT")
+print("=" * 80)
+
+print(f"\nOperational appointments: {len(audit):,}")
+
+print("\n1. LEAD-TIME DATA QUALITY")
+print(f"Missing lead bands: {missing_band.sum():,}")
+print(f"Already missing in input parquet: {missing_in_input:,}")
+print(f"Numeric conversion failures: {parse_errors:,}")
+print(f"Numeric values outside category bins: {outside_count:,}")
+
+assert (
+    missing_in_input + parse_errors + outside_count
+    == int(missing_band.sum())
+), "Unexplained missing lead-time categories"
+
+print("\nWork types among missing lead times:")
+print(
+    audit.loc[missing_band, "Work Type: Work Type Name"]
+    .value_counts(dropna=False)
+    .head(10)
+    .to_string()
+)
+
+print("\nStatuses among missing lead times:")
+print(
+    audit.loc[missing_band, "Status"]
+    .value_counts(dropna=False)
+    .to_string()
+)
+
+print("\n2. APPOINTMENT DATE SOURCES")
+print(
+    audit["effective_date_source"]
+    .value_counts(dropna=False)
+    .to_string()
+)
+
+assert audit["effective_date"].notna().all()
+
+print("\n3. TERRITORY DATA QUALITY")
+print(
+    "Missing customer territory:",
+    int(audit["customer_territory"].isna().sum())
+)
+
+print(
+    "Missing technician home territory:",
+    int(audit["tech_territory"].isna().sum())
+)
+
+print(
+    "Unknown own-territory comparison:",
+    int(audit["own_territory"].isna().sum())
+)
+
+print(
+    "Missing/unmapped region:",
+    int(audit["region"].isna().sum())
+)
+
+print("\n4. PLANNED DURATION DATA QUALITY")
+
+invalid_duration = (
+    audit["planned_minutes"].isna()
+    | (audit["planned_minutes"] <= 0)
+)
+
+print(
+    "Missing, zero or negative planned durations:",
+    int(invalid_duration.sum())
+)
+
+print("\n5. APPOINTMENT STATUS DISTRIBUTION")
+print(
+    audit["Status"]
+    .value_counts(dropna=False)
+    .to_string()
+)
+
+print("\nAll final cleaning audit checks passed.")
+
 
 # %%
 # --- Save -------------------------------------------------------------

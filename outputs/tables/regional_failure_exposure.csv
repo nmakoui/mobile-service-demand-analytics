@@ -1,0 +1,7 @@
+region,appointments,total_planned_hours,started_internal_failures,booked_hours_on_started_failures,exposure_pct_of_booked_hours
+Group 1,8733,5743.01,420,253.05,4.41
+Group 2,10347,6031.18,506,304.07,5.04
+Group 3,7354,5076.95,361,231.08,4.55
+Group 4,5516,3201.98,214,127.56,3.98
+Group 5,9944,6254.21,537,307.96,4.92
+Group 6,5385,3305.97,301,183.28,5.54

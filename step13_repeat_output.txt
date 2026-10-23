@@ -1,0 +1,28 @@
+
+================================================================================
+SUBSEQUENT SAME-VEHICLE APPOINTMENT ANALYSIS
+================================================================================
+Total failed appointments: 9,208
+Failed appointments with vehicle identifier: 9,193
+Latest observed appointment date: 2025-02-27 00:00:00
+Date-window eligibility cutoff: 2024-12-29 00:00:00
+Eligible failed appointments: 9,193
+Ineligible / unscoreable failed appointments: 15
+Observed subsequent appointment within 60 days: 4,557
+Observed subsequent-appointment rate: 49.6%
+
+By failure owner:
+               size   mean
+failure_owner             
+Booking admin   478  0.186
+Customer       3863  0.339
+Not recorded    214  0.621
+Resource       1680  0.674
+Stock          2958  0.640
+
+LIMITATIONS:
+A subsequent appointment may be unrelated to the original failure.
+Created-Date extraction limits may omit later appointments, even when the date-window criterion is satisfied.
+Do not interpret this result as a confirmed first-time-fix rate.
+
+All repeat-appointment checks passed.

@@ -1,0 +1,4 @@
+target,base_rate,AUC,top10pct_precision,lift
+any failure,21.3%,0.58,33.0%,1.55
+stock failure (any),6.5%,0.603,10.3%,1.58
+wrong parts ordered,2.8%,0.531,2.5%,0.89

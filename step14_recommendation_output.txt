@@ -1,0 +1,36 @@
+
+================================================================================
+STOCK FAILURE EVIDENCE
+================================================================================
+               failure_reason  failed_appointments  with_recorded_start  without_recorded_start  recorded_start_rate_pct  booked_hours_all  booked_hours_with_start
+          Wrong parts ordered                 1390                 1320                      70                    94.96            838.67                   791.08
+           Tyres not in Stock                 1182                  160                    1022                    13.54            765.83                   110.98
+Locking Wheel Nut Unavailable                  343                  293                      50                    85.42            195.53                   167.39
+
+================================================================================
+PROPOSED PRE-DISPATCH READINESS PILOT
+================================================================================
+Target failure categories: Wrong parts ordered, Locking Wheel Nut Unavailable
+Failed appointments: 1,733
+Failures with recorded start: 1,613
+Planned hours associated with recorded starts: 958.5
+
+RECOMMENDATION:
+Pilot a pre-dispatch parts-readiness check for parts-dependent appointments.
+Verify parts compatibility, stock readiness and locking-wheel-nut requirements before dispatch.
+
+PILOT DESIGN:
+1. Select comparable territories or booking teams for a controlled operational pilot.
+2. Record whether readiness checks find problems before the scheduled appointment.
+3. Measure overall failure rates, failure reasons, recorded-start rates and rescheduling outcomes.
+4. Record additional checking time and any verified technician time made available.
+5. Compare results with a suitable baseline or comparison group before scaling.
+
+IMPORTANT LIMITATIONS:
+- Actual Start is a recorded-start proxy, not proof of travel or physical attendance.
+- Planned hours are booked workload, not confirmed wasted or recoverable labour.
+- A lower recorded-start rate does not by itself mean the failure was prevented.
+- Different stock failure categories may have different operational causes.
+- No technician headcount or financial savings are claimed from this analysis.
+
+All recommendation checks passed.

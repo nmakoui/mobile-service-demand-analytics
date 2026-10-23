@@ -1,0 +1,217 @@
+Roster: 199 technicians
+  worked at least one job: 158
+  no jobs at all:          41
+
+Inactive technicians by territory:
+Territory
+G3-08-Birmingham           4
+G5-11-Reading & Slough     4
+G2-15-Chester              2
+G2-14-Bromborough          2
+G6-03-Colchester           2
+G3-03-Burton On Trent      2
+G3-05-Leicester            2
+G2-13-Liverpool            2
+G1-10-Glasgow              2
+G4-04-Plymouth & Exeter    2
+G5-12-London South West    2
+G3-06-Coventry             2
+
+territories affected: 25 of 68
+
+==============================================================================================================
+HIGHEST DEMAND PER ACTIVE HOME-BASED TECHNICIAN (DIAGNOSTIC)
+==============================================================================================================
+                              demand_jobs  demand_hours  active_home_technicians  home_tech_days  jobs_by_home_technicians  hours_by_home_technicians  jobs_per_home_tech_day  hours_per_home_tech_day  days_per_home_technician  demand_hours_per_active_home_technician
+customer_territory                                                                                                                                                                                                                                                       
+G3-05-Leicester                       791        1184.0                      2.0            91.0                     616.0                      447.0                     6.8                      4.9                      46.0                                    592.0
+G5-11-Reading & Slough               1180         702.0                      2.0            63.0                     587.0                      348.0                     9.3                      5.5                      32.0                                    351.0
+G3-07-Leamington Spa                  469         289.0                      1.0            54.0                     359.0                      247.0                     6.6                      4.6                      54.0                                    289.0
+G6-07-Cambridge                       424         272.0                      1.0            44.0                     322.0                      212.0                     7.3                      4.8                      44.0                                    272.0
+G5-14-London Central                  508         271.0                      1.0            43.0                     326.0                      178.0                     7.6                      4.1                      43.0                                    271.0
+G5-08-Maidstone & Gillingham          911         541.0                      2.0            82.0                     562.0                      321.0                     6.9                      3.9                      41.0                                    270.5
+G4-01-Swindon                         440         269.0                      1.0            33.0                     335.0                      203.0                    10.2                      6.2                      33.0                                    269.0
+G2-06-Huddersfield                    791         527.0                      2.0            68.0                     573.0                      336.0                     8.4                      4.9                      34.0                                    263.5
+G5-13-London North West               444         261.0                      1.0            51.0                     372.0                      214.0                     7.3                      4.2                      51.0                                    261.0
+G3-10-Hereford & Gloucester           792         471.0                      2.0            70.0                     642.0                      380.0                     9.2                      5.4                      35.0                                    235.5
+G3-11-Oxford                          763         460.0                      2.0            89.0                     744.0                      458.0                     8.4                      5.1                      44.0                                    230.0
+G1-15-Thornaby                        770         459.0                      2.0           106.0                     827.0                      498.0                     7.8                      4.7                      53.0                                    229.5
+G6-06-Peterborough                    461         458.0                      2.0            92.0                     492.0                      479.0                     5.3                      5.2                      46.0                                    229.0
+G3-01-Telford                         355         225.0                      1.0            53.0                     393.0                      246.0                     7.4                      4.6                      53.0                                    225.0
+G6-03-Colchester                     1145         662.0                      3.0           105.0                     799.0                      462.0                     7.6                      4.4                      35.0                                    220.7
+
+==============================================================================================================
+LOWEST DEMAND PER ACTIVE HOME-BASED TECHNICIAN (DIAGNOSTIC)
+==============================================================================================================
+                          demand_jobs  demand_hours  active_home_technicians  home_tech_days  jobs_by_home_technicians  hours_by_home_technicians  jobs_per_home_tech_day  hours_per_home_tech_day  days_per_home_technician  demand_hours_per_active_home_technician
+customer_territory                                                                                                                                                                                                                                                   
+G5-07-Whitstable                  248         135.0                      1.0            40.0                     232.0                      127.0                     5.8                      3.2                      40.0                                    135.0
+G6-08-Luton & Letchworth          964         531.0                      4.0           171.0                    1277.0                      728.0                     7.5                      4.3                      43.0                                    132.8
+G2-11-Manchester                 1740         961.0                      8.0           238.0                    2187.0                     1224.0                     9.2                      5.1                      30.0                                    120.1
+G3-06-Coventry                    786         470.0                      4.0           171.0                     882.0                      940.0                     5.2                      5.5                      43.0                                    117.5
+G6-02-CHELMSFORD                  422         230.0                      2.0            95.0                     590.0                      322.0                     6.2                      3.4                      48.0                                    115.0
+G5-16-London North East          1208         671.0                      6.0           234.0                    1840.0                     1055.0                     7.9                      4.5                      39.0                                    111.8
+G3-03-Burton On Trent             173         100.0                      1.0            49.0                     226.0                      194.0                     4.6                      4.0                      49.0                                    100.0
+G5-02-Andover                     163          97.0                      1.0            50.0                     395.0                      230.0                     7.9                      4.6                      50.0                                     97.0
+G6-05-Kings Lynn                  150          88.0                      1.0            45.0                     224.0                      132.0                     5.0                      2.9                      45.0                                     88.0
+G2-02-Hull                         78          46.0                      1.0            54.0                     360.0                      221.0                     6.7                      4.1                      54.0                                     46.0
+
+Territories with demand but no active home-based technician: 6
+                     demand_jobs  demand_hours
+customer_territory                            
+G1-05-Inverness-off           35          23.0
+G2-15-Chester                239         161.0
+G5-01-Bournemouth            104          57.0
+G6-01-Harlow                 207         113.0
+Suspended                    126          80.0
+Suspended-Irvine               6           4.0
+
+==============================================================================================================
+NATIONAL
+==============================================================================================================
+active technicians      : 158
+technician-days worked  : 6,649
+median days per tech    : 44 of 92
+median jobs/tech-day    : 7.0
+median hours/tech-day   : 4.4
+
+TERRITORY DATA QUALITY CHECK
+Customer-territory appointments: 47,411
+Known technician-home assignments: 47,411
+Unknown technician-home assignments: 0
+Territories with unknown assignments: 0
+
+====================================================================================================
+TERRITORIES WHERE ASSIGNED AND SERVING TECHNICIANS DIFFER MOST
+====================================================================================================
+                             demand_jobs  demand_hours  techs_assigned  techs_serving  tech_days_in_territory  hours_per_serving_tech  own_territory_rate  known_home_jobs  unknown_home_jobs   gap
+customer_territory                                                                                                                                                                                 
+G3-05-Leicester                      791        1184.2             4.0             31                     301                    38.2               0.664              791                  0  27.0
+G5-13-London North West              444         260.6             1.0             22                     145                    11.8               0.660              444                  0  21.0
+G5-14-London Central                 508         270.8             1.0             22                     187                    12.3               0.132              508                  0  21.0
+G3-11-Oxford                         763         459.8             3.0             22                     201                    20.9               0.710              763                  0  19.0
+G5-16-London North East             1208         671.1             7.0             26                     310                    25.8               0.743             1208                  0  19.0
+G2-10-Bolton                         338         188.4             1.0             19                     126                     9.9               0.604              338                  0  18.0
+G5-15-London South East             1515         869.7             7.0             25                     348                    34.8               0.718             1515                  0  18.0
+G5-11-Reading & Slough              1180         702.3             6.0             24                     315                    29.3               0.418             1180                  0  18.0
+G2-12-Warrington                     633         397.7             3.0             20                     222                    19.9               0.585              633                  0  17.0
+G5-09-Crawley & Dorking              737         428.0             2.0             19                     206                    22.5               0.803              737                  0  17.0
+G3-10-Hereford & Gloucester          792         471.2             3.0             20                     179                    23.6               0.722              792                  0  17.0
+G3-12-Aylesbury & Hemel              584         354.2             2.0             18                     178                    19.7               0.659              584                  0  16.0
+
+====================================================================================================
+LOWEST OWN-TERRITORY RATE  (served mostly from outside)
+====================================================================================================
+                              demand_jobs  demand_hours  techs_assigned  techs_serving  tech_days_in_territory  hours_per_serving_tech  own_territory_rate  known_home_jobs  unknown_home_jobs
+customer_territory                                                                                                                                                                            
+G2-15-Chester                         239         161.1             2.0             17                     134                     9.5               0.000              239                  0
+G6-01-Harlow                          207         113.0             1.0             14                      95                     8.1               0.000              207                  0
+G5-14-London Central                  508         270.8             1.0             22                     187                    12.3               0.132              508                  0
+G1-04-Portadown                       290         156.7             1.0              6                      98                    26.1               0.176              290                  0
+G5-11-Reading & Slough               1180         702.3             6.0             24                     315                    29.3               0.418             1180                  0
+G1-02-Ballymena                       550         300.6             2.0              7                     177                    42.9               0.438              550                  0
+G2-03-Wakefield                       871         511.2             3.0             14                     241                    36.5               0.481              871                  0
+G2-14-Bromborough                     366         201.0             3.0             14                     109                    14.4               0.544              366                  0
+G2-06-Huddersfield                    791         526.7             2.0             16                     217                    32.9               0.545              791                  0
+G5-08-Maidstone & Gillingham          911         540.7             2.0             14                     223                    38.6               0.548              911                  0
+
+====================================================================================================
+Q3 — WORK PER TECHNICIAN
+====================================================================================================
+
+By shift pattern:
+                          n  med_days  med_jobs  med_jobs_day  med_hours_day
+Working Hours                                                               
+Mobile 6 - Alternating    2      47.5     363.0           7.6            4.6
+Mobile 6 – Normal         1      58.0     272.0           4.7            5.0
+Mobile 7                 43      35.0     308.0           9.0            5.2
+Standard                112      47.0     319.0           6.8            4.2
+
+Spread across all active technicians:
+         jobs    days  jobs_per_day  hours_per_day  territories
+count  158.00  158.00        158.00         158.00       158.00
+mean   302.20   42.08          7.29           4.54         6.03
+std     83.03    9.35          1.76           1.05         2.59
+min     35.00    5.00          1.78           2.76         1.00
+10%    203.80   31.00          5.25           3.43         3.00
+25%    268.50   36.00          6.32           3.84         4.00
+50%    317.00   44.00          7.24           4.50         6.00
+75%    349.50   49.00          8.41           5.07         8.00
+90%    393.60   51.00          9.35           5.72         9.00
+max    486.00   60.00         11.59           9.73        15.00
+  jobs           p10=  203.8  p90=  393.6  ratio=1.93x
+  jobs_per_day   p10=    5.2  p90=    9.3  ratio=1.78x
+  hours_per_day  p10=    3.4  p90=    5.7  ratio=1.67x
+
+================================================================================
+TERRITORIES WITH A ROSTER BUT NOBODY WORKING
+================================================================================
+                   on_roster  active  inactive  jobs  hours
+Territory                                                  
+G2-15-Chester              2       0         2   239  161.0
+G5-01-Bournemouth          1       0         1   104   57.0
+G6-01-Harlow               1       0         1   207  113.0
+
+technicians not matching G<N>- prefix: 0
+
+================================================================================
+REGIONAL DATA COVERAGE CHECK
+================================================================================
+Total appointments: 47,747
+Appointments with customer territory: 47,411
+Appointments with region: 47,279
+Missing region despite known customer territory: 132
+
+================================================================================
+CUSTOMER TERRITORIES WITHOUT REGION MAPPING
+================================================================================
+customer_territory
+Suspended           126
+Suspended-Irvine      6
+
+================================================================================
+APPOINTMENTS WITHOUT CUSTOMER TERRITORY
+================================================================================
+Number of appointments: 336
+Number with a region: 0
+Distinct technicians involved: 121
+National distinct technician-days: 6,649
+Sum of observed technician-region-days: 7,451
+Technicians serving multiple regions on the same date: 746
+
+================================================================================
+Q2 — REGION SUPPLY vs DEMAND
+================================================================================
+         on_roster  active  inactive_pct   jobs   hours  hours_per_active_tech  hours_per_tech_day
+region                                                                                            
+Group 1         34      31           9.0   8733  5743.0                  185.0                4.15
+Group 2         44      34          23.0  10347  6031.0                  177.0                4.25
+Group 3         37      24          35.0   7354  5077.0                  212.0                3.78
+Group 4         19      16          16.0   5516  3202.0                  200.0                3.83
+Group 5         44      35          20.0   9944  6254.0                  179.0                4.02
+Group 6         21      18          14.0   5385  3306.0                  184.0                3.61
+
+====================================================================================================
+Q2 — REGION LOAD, MEASURED BOTH WAYS
+====================================================================================================
+         on_roster  active  inactive_pct  jobs_per_active_tech  rank_jobs  hours_per_active_tech  rank_hours  jobs_per_tech_day  hours_per_tech_day  avg_job_min
+region                                                                                                                                                          
+Group 3         37      24          35.0                 306.0          2                  212.0           1               5.48                3.78         41.4
+Group 4         19      16          16.0                 345.0          1                  200.0           2               6.60                3.83         34.8
+Group 1         34      31           9.0                 282.0          6                  185.0           3               6.31                4.15         39.5
+Group 6         21      18          14.0                 299.0          4                  184.0           4               5.89                3.61         36.8
+Group 5         44      35          20.0                 284.0          5                  179.0           5               6.39                4.02         37.7
+Group 2         44      34          23.0                 304.0          3                  177.0           6               7.30                4.25         35.0
+
+Where the two units disagree:
+  Group 1: 6 by jobs, 3 by hours (average job 40 min)
+  Group 2: 3 by jobs, 6 by hours (average job 35 min)
+  Group 3: 2 by jobs, 1 by hours (average job 41 min)
+  Group 4: 1 by jobs, 2 by hours (average job 35 min)
+
+================================================================================
+Q3 — SPREAD WITHIN SHIFT PATTERN  (154 technicians, 4 dropped for under 20 days)
+================================================================================
+  Mobile 7               n= 43  p10=4.51  p90=6.22  ratio=1.38x  median=5.22
+  Standard               n=108  p10=3.36  p90=5.11  ratio=1.52x  median=4.16
+  ALL PATTERNS           n=154  p10=3.44  p90=5.76  ratio=1.68x  median=4.51

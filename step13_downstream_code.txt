@@ -1,0 +1,304 @@
+===== 05_model.py =====
+"""
+Phase 4 — Can we predict which appointments will fail?
+
+Run:  .venv\\Scripts\\python.exe src/05_model.py
+"""
+# %%
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+pd.set_option("display.width", 200)
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+jobs = jobs.dropna(subset=["region"])
+
+# %%
+# --- Features the planner would actually have ------------------------
+# Only things known WHEN THE JOB IS BOOKED. Anything recorded during or
+# after the visit would leak the answer: Sub_Categories__c IS the failure
+# reason, so a model using it would score beautifully and be worthless.
+jobs["work_type_grp"] = np.where(
+    jobs["Work Type: Work Type Name"].str.startswith("Inspect & Fit", na=False),
+    "Inspect & Fit",
+    jobs["Work Type: Work Type Name"],
+)
+jobs["is_retail_str"] = jobs["Is Retail"].astype(str)
+jobs["booked_hour"] = jobs["Booked Slot Start Time"].dt.hour
+jobs["own_terr"] = jobs["own_territory"].astype(int)
+
+NUMERIC = ["Lead Time", "Number of Tyres", "planned_minutes",
+           "booked_hour", "own_terr", "FSL__Efficiency__c"]
+CATEGORICAL = ["work_type_grp", "region", "dow", "is_retail_str", "working_hours"]
+
+# %%
+# --- Split by TIME, not at random ------------------------------------
+# A random split lets the model learn from December to predict November.
+# In real use you only ever have the past, so train on Oct-Nov, test on Dec.
+train = jobs[jobs["effective_date"] < "2024-12-01"]
+test = jobs[jobs["effective_date"] >= "2024-12-01"]
+
+print(f"train {len(train):,} (Oct-Nov)   test {len(test):,} (Dec)")
+print(f"failure rate   train {train['failed'].mean():.1%}   test {test['failed'].mean():.1%}")
+print("December is worse than the months we trained on, which the model cannot know.")
+
+# %%
+preprocess = ColumnTransformer([
+    ("num", Pipeline([("impute", SimpleImputer(strategy="median")),
+                      ("scale", StandardScaler())]), NUMERIC),
+    ("cat", Pipeline([("impute", SimpleImputer(strategy="most_frequent")),
+                      ("encode", OneHotEncoder(handle_unknown="ignore",
+                                               min_frequency=30))]), CATEGORICAL),
+])
+
+model = Pipeline([("prep", preprocess),
+                  ("clf", LogisticRegression(max_iter=3000))])
+model.fit(train[NUMERIC + CATEGORICAL], train["failed"])
+
+risk = model.predict_proba(test[NUMERIC + CATEGORICAL])[:, 1]
+baseline = test["failed"].mean()
+
+print("\n" + "=" * 78)
+print("HOW GOOD IS IT?")
+print("=" * 78)
+print(f"AUC: {roc_auc_score(test['failed'], risk):.3f}")
+print("  0.5 would be a coin flip. 0.7+ would be genuinely useful.")
+
+# %%
+# --- The number a planner actually cares about ------------------------
+# Not AUC. "If I check the riskiest N jobs, how many really fail?"
+scored = test.assign(risk=risk)
+days = scored["effective_date"].nunique()
+
+print("\n" + "=" * 78)
+print("IF A PLANNER CHECKED THE RISKIEST JOBS EACH DAY")
+print("=" * 78)
+print(f"(December: {len(scored):,} appointments over {days} days, "
+      f"baseline failure rate {baseline:.1%})\n")
+
+for pct in [5, 10, 20, 30]:
+    n = int(len(scored) * pct / 100)
+    top = scored.nlargest(n, "risk")
+    print(f"  top {pct:>2}%  {n / days:>5.0f} jobs/day  "
+          f"precision {top['failed'].mean():>5.1%}  "
+          f"lift {top['failed'].mean() / baseline:.2f}x  "
+          f"catches {top['failed'].sum() / scored['failed'].sum():>4.0%} of failures")
+
+# %%
+# --- Can it find the expensive failure mode? -------------------------
+# Wrong parts ordered sends a technician out 95% of the time. If anything
+# is worth predicting, it is this one.
+print("\n" + "=" * 78)
+print("THE SAME MODEL, AIMED AT SPECIFIC FAILURE TYPES")
+print("=" * 78)
+
+STOCK = ["Wrong parts ordered", "Tyres not in Stock",
+         "Locking Wheel Nut Unavailable", "Stock too far for pickup",
+         "Centre refused to release stock"]
+
+targets = {
+    "any failure": ("failed", None),
+    "stock failure (any)": (None, STOCK),
+    "wrong parts ordered": (None, ["Wrong parts ordered"]),
+}
+
+results = []
+for label, (col, cats) in targets.items():
+    if col:
+        y_tr, y_te = train[col], test[col]
+    else:
+        y_tr = train["Sub_Categories__c"].isin(cats).astype(int)
+        y_te = test["Sub_Categories__c"].isin(cats).astype(int)
+
+    m = Pipeline([("prep", preprocess),
+                  ("clf", LogisticRegression(max_iter=3000))])
+    m.fit(train[NUMERIC + CATEGORICAL], y_tr)
+    p = m.predict_proba(test[NUMERIC + CATEGORICAL])[:, 1]
+
+    base = y_te.mean()
+    t = test.assign(p=p, y=y_te)
+    top = t.nlargest(int(len(t) * 0.10), "p")
+    results.append({
+        "target": label,
+        "base_rate": f"{base:.1%}",
+        "AUC": round(roc_auc_score(y_te, p), 3),
+        "top10pct_precision": f"{top['y'].mean():.1%}",
+        "lift": round(top["y"].mean() / base, 2),
+    })
+
+results = pd.DataFrame(results)
+print(results.to_string(index=False))
+results.to_csv(TABLES / "model_results.csv", index=False)
+
+print("\nAn AUC near 0.50 means the features carry no information about that")
+print("outcome. Nothing recorded at booking time predicts whether the parts")
+print("will be wrong - so the fix is a check before dispatch, not a model.")
+
+# %%
+# --- What does the model think drives failure? ------------------------
+names = model.named_steps["prep"].get_feature_names_out()
+coefs = pd.Series(model.named_steps["clf"].coef_[0], index=names).sort_values()
+
+print("\n" + "=" * 78)
+print("WHAT PUSHES RISK UP AND DOWN")
+print("=" * 78)
+print("\nraises risk:")
+print(coefs.tail(6).iloc[::-1].round(3).to_string())
+print("\nlowers risk:")
+print(coefs.head(6).round(3).to_string())
+coefs.to_csv(TABLES / "model_coefficients.csv")===== 08_first_time_fix.py =====
+from pathlib import Path
+import pandas as pd
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+
+# Full file (not window-filtered): a December failure's repeat can land in Jan/Feb.
+all_real = sa[~sa["is_placeholder"]].dropna(subset=["VRN_formula__c", "effective_date"]).copy()
+max_date = all_real["effective_date"].max()
+
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+failed = jobs[jobs["failed"] & jobs["VRN_formula__c"].notna()].copy()
+
+LOOKAHEAD_DAYS = 60
+failed["has_full_lookahead"] = failed["effective_date"] <= (max_date - pd.Timedelta(days=LOOKAHEAD_DAYS))
+scoreable = failed[failed["has_full_lookahead"]].copy()
+
+merged = scoreable.merge(
+    all_real[["VRN_formula__c", "effective_date", "Id", "planned_minutes"]],
+    on="VRN_formula__c", suffixes=("", "_other")
+)
+merged = merged[
+    (merged["Id_other"] != merged["Id"]) &
+    (merged["effective_date_other"] > merged["effective_date"]) &
+    (merged["effective_date_other"] <= merged["effective_date"] + pd.Timedelta(days=LOOKAHEAD_DAYS))
+]
+first_repeat = (
+    merged.sort_values("effective_date_other")
+    .groupby("Id").first()[["effective_date_other", "planned_minutes_other"]]
+    .rename(columns={"effective_date_other": "repeat_date", "planned_minutes_other": "repeat_minutes"})
+)
+scoreable = scoreable.join(first_repeat, on="Id")
+scoreable["repeat_visit"] = scoreable["repeat_date"].notna()
+
+print(f"Scoreable failed jobs (full {LOOKAHEAD_DAYS}d lookahead): {len(scoreable):,} of {len(failed):,}")
+print(f"Repeat-visit rate: {scoreable['repeat_visit'].mean():.1%}")
+print("\nBy failure owner:")
+print(scoreable.groupby("failure_owner")["repeat_visit"].agg(["size","mean"]).round(3).to_string())
+
+scoreable[["Id","failure_owner","Sub_Categories__c","repeat_visit","repeat_minutes"]].to_csv(
+    TABLES / "first_time_fix.csv", index=False
+)===== 11_star_schema.py =====
+"""
+Phase 5 — Export the Power BI star schema.
+
+Run:  python src/11_star_schema.py
+"""
+from pathlib import Path
+import pandas as pd
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+PBI = ROOT / "outputs" / "powerbi"
+PBI.mkdir(parents=True, exist_ok=True)
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+jobs["Attended"] = jobs["Actual Start"].notna()
+tech_raw = pd.read_parquet(PROCESSED / "tech_raw.parquet")
+
+# --- Fact_Appointments (grain: one appointment) -------------------------
+fact_appt = jobs[[
+    "Id", "ServiceResourceId", "customer_territory", "effective_date",
+    "Status", "failed", "failure_owner", "Sub_Categories__c",
+    "planned_minutes", "Lead Time", "lead_band", "slot_hour",
+    "Is Retail", "Work Type: Work Type Name", "own_territory",
+    "suspended_district", "VRN_formula__c", "Attended",
+]].rename(columns={
+    "Id": "AppointmentId", "ServiceResourceId": "TechnicianKey",
+    "customer_territory": "TerritoryKey", "effective_date": "DateKey",
+    "failed": "Failed", "failure_owner": "FailureOwner",
+    "Sub_Categories__c": "FailureReason", "planned_minutes": "PlannedMinutes",
+    "Lead Time": "LeadTimeDays", "lead_band": "LeadBand", "slot_hour": "BookedHour",
+    "Is Retail": "IsRetail", "Work Type: Work Type Name": "WorkType",
+    "own_territory": "OwnTerritory", "suspended_district": "SuspendedDistrict",
+    "VRN_formula__c": "VRN",
+})
+fact_appt["DateKey"] = fact_appt["DateKey"].dt.date
+
+ftf_path = TABLES / "first_time_fix.csv"
+if ftf_path.exists():
+    ftf = pd.read_csv(ftf_path)[["Id", "repeat_visit", "repeat_minutes"]].rename(
+        columns={"Id": "AppointmentId", "repeat_visit": "RepeatVisit", "repeat_minutes": "RepeatMinutes"}
+    )
+    fact_appt = fact_appt.merge(ftf, on="AppointmentId", how="left")
+else:
+    print("first_time_fix.csv not found - run 08_first_time_fix.py first for the repeat-visit columns.")
+
+fact_appt.to_csv(PBI / "fact_appointments.csv", index=False)
+print(f"Fact_Appointments: {len(fact_appt):,} rows")
+
+# --- Dim_Technician -------------------------------------------------
+dim_tech = tech_raw[[
+    "ServiceResourceId", "Service_Resource_Name", "Territory",
+    "Base Centre", "Base Centre Postal Code", "Working Hours",
+]].rename(columns={
+    "ServiceResourceId": "TechnicianKey", "Service_Resource_Name": "TechName",
+    "Territory": "HomeTerritory", "Base Centre": "BaseCentre",
+    "Base Centre Postal Code": "BaseCentrePostcode", "Working Hours": "WorkingHoursPattern",
+})
+dim_tech["HomeRegion"] = "Group " + dim_tech["HomeTerritory"].str.extract(r"^G(\d+)-")[0]
+dim_tech.to_csv(PBI / "dim_technician.csv", index=False)
+print(f"Dim_Technician: {len(dim_tech):,} rows")
+
+# --- Dim_Territory ----------------------------------------------------
+dim_terr = (
+    jobs[["customer_territory", "region", "territory_restriction"]]
+    .drop_duplicates(subset=["customer_territory"])
+    .rename(columns={"customer_territory": "TerritoryKey", "region": "Region",
+                      "territory_restriction": "RestrictionStatus"})
+)
+dupes = dim_terr["TerritoryKey"].duplicated().sum()
+print(f"Dim_Territory key duplicates (should be 0): {dupes}")
+dim_terr["TerritoryName"] = dim_terr["TerritoryKey"].str.replace(r"^G\d+-\d+-", "", regex=True)
+dim_terr.to_csv(PBI / "dim_territory.csv", index=False)
+print(f"Dim_Territory: {len(dim_terr):,} rows")
+
+# --- Fact_TechnicianDay (grain: technician x date — a second, smaller fact) ---
+tdp = TABLES / "travel_by_tech_day.csv"
+if tdp.exists():
+    tech_day = pd.read_csv(tdp).rename(
+        columns={"ServiceResourceId": "TechnicianKey", "effective_date": "DateKey"}
+    )
+    tech_day.to_csv(PBI / "fact_technician_day.csv", index=False)
+    print(f"Fact_TechnicianDay: {len(tech_day):,} rows")
+else:
+    print("travel_by_tech_day.csv not found - run 07_travel.py first for this table.")

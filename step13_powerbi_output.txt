@@ -1,0 +1,10 @@
+
+REPEAT APPOINTMENT EXPORT CHECK
+Eligible failed appointments: 9193
+Observed subsequent appointments: 4557
+Unscoreable / not applicable: 38554
+Fact_Appointments: 47,747 rows
+Dim_Technician: 199 rows
+Dim_Territory key duplicates (should be 0): 0
+Dim_Territory: 71 rows
+Fact_TechnicianDay: 6,649 rows

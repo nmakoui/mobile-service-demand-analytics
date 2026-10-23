@@ -1,0 +1,18 @@
+
+{
+  "name": "Kwik Fit Mobile - Resource Planning",
+  "dataColors": [
+    "#0054A6",
+    "#FFCB21",
+    "#3879B8",
+    "#F3A811",
+    "#163D73",
+    "#7EB0DE"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#163D73",
+  "tableAccent": "#0054A6",
+  "good": "#27805D",
+  "neutral": "#FFCB21",
+  "bad": "#C74338"
+}

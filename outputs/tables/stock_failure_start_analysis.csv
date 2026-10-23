@@ -1,0 +1,6 @@
+stock_failure_reason,failed_appointments,share_stock_failures_pct,with_recorded_start,recorded_start_pct,booked_hours_all,booked_hours_with_start
+Wrong parts ordered,1390,46.91,1320,94.96,838.67,791.08
+Tyres not in Stock,1182,39.89,160,13.54,765.83,110.98
+Locking Wheel Nut Unavailable,343,11.58,293,85.42,195.53,167.39
+Stock too far for pickup,34,1.15,13,38.24,16.66,6.5
+Centre refused to release stock,14,0.47,7,50.0,9.02,4.09

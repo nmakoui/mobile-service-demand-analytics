@@ -1,0 +1,6 @@
+failure_owner,appointments,attended,booked_min,attended_pct,booked_hours,attended_hours
+Customer,3865,1290,130411.0,33.0,2174.0,709.0
+Stock,2963,1793,109543.0,61.0,1826.0,1080.0
+Resource,1682,397,59986.5,24.0,1000.0,235.0
+Booking admin,483,180,17174.5,37.0,286.0,111.0
+Not recorded,215,65,8498.0,30.0,142.0,49.0

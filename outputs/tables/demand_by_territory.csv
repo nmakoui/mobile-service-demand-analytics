@@ -1,0 +1,70 @@
+region,customer_territory,jobs,planned_min,hours,avg_job_min,rank_jobs,rank_hours,rank_move
+Group 1,G1-10-Glasgow,2282,89307.0,1488.0,39.1,1,1,0
+Group 1,G1-08-Edinburgh,1534,84352.5,1406.0,55.0,5,2,3
+Group 5,G5-12-London South West,1164,73316.0,1222.0,63.0,12,3,9
+Group 3,G3-05-Leicester,791,71052.5,1184.0,89.8,23,4,19
+Group 2,G2-13-Liverpool,1927,63727.0,1062.0,33.1,2,5,-3
+Group 4,G4-02-Bristol,1683,58143.0,969.0,34.5,4,6,-2
+Group 2,G2-11-Manchester,1740,57641.5,961.0,33.1,3,7,-4
+Group 2,G2-04-Sheffield & Doncaster,1507,53271.0,888.0,35.3,7,8,-1
+Group 5,G5-15-London South East,1515,52184.0,870.0,34.4,6,9,-3
+Group 4,G4-04-Plymouth & Exeter,1362,48369.0,806.0,35.5,9,10,-1
+Group 4,G4-03-Cardiff,1379,46913.0,782.0,34.0,8,11,-3
+Group 5,G5-11-Reading & Slough,1180,42136.5,702.0,35.7,11,12,-1
+Group 5,G5-16-London North East,1208,40264.5,671.0,33.3,10,13,-3
+Group 6,G6-03-Colchester,1145,39700.5,662.0,34.7,13,14,-1
+Group 1,G1-14-Newcastle,1076,38463.5,641.0,35.7,14,15,-1
+Group 6,G6-09-Milton Keynes,1009,35981.5,600.0,35.7,15,16,-1
+Group 5,G5-08-Maidstone & Gillingham,911,32440.5,541.0,35.6,17,17,0
+Group 6,G6-08-Luton & Letchworth,964,31877.5,531.0,33.1,16,18,-2
+Group 2,G2-06-Huddersfield,791,31600.5,527.0,40.0,23,19,4
+Group 2,G2-03-Wakefield,871,30671.5,511.0,35.2,18,20,-2
+Group 3,G3-08-Birmingham,870,30213.0,504.0,34.7,19,21,-2
+Group 3,G3-02-Staffordshire North,812,29695.0,495.0,36.6,21,22,-1
+Group 3,G3-10-Hereford & Gloucester,792,28271.5,471.0,35.7,22,23,-1
+Group 3,G3-06-Coventry,786,28182.0,470.0,35.9,25,24,1
+Group 3,G3-11-Oxford,763,27585.5,460.0,36.2,27,25,2
+Group 1,G1-15-Thornaby,770,27557.0,459.0,35.8,26,26,0
+Group 6,G6-06-Peterborough,461,27478.5,458.0,59.6,40,27,13
+Group 5,G5-09-Crawley & Dorking,737,25681.0,428.0,34.8,28,28,0
+Group 1,G1-03-Belfast And Lisburn,820,25415.0,424.0,31.0,20,29,-9
+Group 2,G2-12-Warrington,633,23862.0,398.0,37.7,30,30,0
+Group 4,G4-04-Carmarthen & Neath,652,22569.0,376.0,34.6,29,31,-2
+Group 3,G3-12-Aylesbury & Hemel,584,21250.5,354.0,36.4,32,32,0
+Group 2,G2-08-Blackburn & Nelson,590,20526.5,342.0,34.8,31,33,-2
+Group 5,G5-03-Southhampton,573,19523.0,325.0,34.1,33,34,-1
+Group 1,G1-05-Inverness,477,19126.0,319.0,40.1,38,35,3
+Group 3,G3-09-Wednesbury,566,18518.0,309.0,32.7,34,36,-2
+Group 1,G1-02-Ballymena,550,18036.5,301.0,32.8,35,37,-2
+Group 5,G5-04-Bognor Regis,520,17456.0,291.0,33.6,36,38,-2
+Group 3,G3-07-Leamington Spa,469,17336.5,289.0,37.0,39,39,0
+Group 6,G6-07-Cambridge,424,16298.0,272.0,38.4,43,40,3
+Group 5,G5-14-London Central,508,16247.0,271.0,32.0,37,41,-4
+Group 4,G4-01-Swindon,440,16125.0,269.0,36.6,42,42,0
+Group 5,G5-13-London North West,444,15635.5,261.0,35.2,41,43,-2
+Group 6,G6-02-CHELMSFORD,422,13777.5,230.0,32.6,44,44,0
+Group 3,G3-01-Telford,355,13510.5,225.0,38.1,47,45,2
+Group 3,G3-04-Mansfield & Nottingham,393,13023.0,217.0,33.1,45,46,-1
+Group 6,G6-10-Northampton,352,12362.0,206.0,35.1,49,47,2
+Group 2,G2-09-Blackpool,354,12254.5,204.0,34.6,48,48,0
+Group 2,G2-01-York,327,12184.5,203.0,37.3,54,49,5
+Group 2,G2-14-Bromborough,366,12061.0,201.0,33.0,46,50,-4
+Group 5,G5-05-Eastbourne,338,11801.0,197.0,34.9,50,51,-1
+Group 1,G1-06-Dundee,307,11648.0,194.0,37.9,56,52,4
+Group 5,G5-06-Ashford,331,11254.5,188.0,34.0,52,53,-1
+Group 2,G2-10-Bolton,338,11306.0,188.0,33.4,50,53,-3
+Group 2,G2-07-Rochdale,312,10452.5,174.0,33.5,55,55,0
+Group 1,G1-01-Coleraine,329,10401.0,173.0,31.6,53,56,-3
+Group 2,G2-05-Lincoln,274,9875.0,165.0,36.0,58,57,1
+Group 2,G2-15-Chester,239,9667.0,161.0,40.4,62,58,4
+Group 1,G1-13-CARLISLE,263,9464.5,158.0,36.0,59,59,0
+Group 1,G1-04-Portadown,290,9401.5,157.0,32.4,57,60,-3
+Group 6,G6-11-Wellingborough,251,8838.5,147.0,35.2,60,61,-1
+Group 5,G5-07-Whitstable,248,8112.5,135.0,32.7,61,62,-1
+Group 6,G6-01-Harlow,207,6778.5,113.0,32.7,63,63,0
+Group 3,G3-03-Burton On Trent,173,5979.0,100.0,34.6,64,64,0
+Group 5,G5-02-Andover,163,5791.5,97.0,35.5,65,65,0
+Group 6,G6-05-Kings Lynn,150,5265.5,88.0,35.1,66,66,0
+Group 5,G5-01-Bournemouth,104,3409.0,57.0,32.8,67,67,0
+Group 2,G2-02-Hull,78,2770.5,46.0,35.5,68,68,0
+Group 1,G1-05-Inverness-off,35,1408.0,23.0,40.2,69,69,0

@@ -3,6 +3,6 @@ Header rows inside the data,Dropped,2,Rows where Id held the literal text 'Id'. 
 Duplicate appointment numbers,None remain,0,The only duplicates were the header rows above.
 Manual Placeholder Job records,"Flagged, excluded from demand",4114,"0% carry a vehicle registration vs 100% of real jobs. Admin holds, not visits."
 Appointment Date missing,Filled from Actual Start / SchedStartTime,1259,95.7% of Inspect & Fit jobs vs 0% of tyre fittings. 961 recovered.
-Dated outside Oct-Dec 2024,"Flagged, excluded from demand only",2394,Created-date cohort. Outcome analysis still uses all rows.
+Dated outside 8 Oct-22 Dec 2024,"Flagged, excluded from demand only",9099,"Window trimmed from both ends to avoid Created-Date censoring: the first/last few days of the raw window were undercounted because the extract filters on Created Date, not appointment date."
 DurationType labelled 'Hours',No change - column is already minutes,1223,"DurationType describes how the job was estimated, not the unit."
 Implausible ActualDuration,"Flagged, blanked in duration_clean",871,"Over 24h, or over 4x planned. A flat cap would delete real 9.5h jobs."

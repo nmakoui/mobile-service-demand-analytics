@@ -1,0 +1,8 @@
+day_of_week,appointments,failed_appointments,started_internal_failures,failure_rate_pct,started_internal_failure_rate_pct
+Monday,8541,1845,427,21.6,5.0
+Tuesday,8727,1569,404,17.98,4.63
+Wednesday,8741,1622,449,18.56,5.14
+Thursday,8502,1535,433,18.05,5.09
+Friday,8679,1672,445,19.26,5.13
+Saturday,2582,558,114,21.61,4.42
+Sunday,1975,407,98,20.61,4.96

@@ -1,0 +1,192 @@
+loaded  sa=60,269  tech=199  terr=2,907
+Date ranges after conversion:
+
+  Created Date                         2024-10-01 00:23  ->  2024-12-31 23:54   (60,269 values)
+  Appointment Date                     2024-10-01 00:00  ->  2025-02-27 00:00   (59,010 values)
+  SchedStartTime                       2024-10-01 07:32  ->  2025-12-09 08:27   (49,117 values)
+  SchedEndTime                         2024-10-01 07:34  ->  2025-12-09 10:27   (49,117 values)
+  Actual Start                         2024-10-01 07:33  ->  2025-07-08 14:19   (53,385 values)
+  ActualEndTime                        2024-10-01 07:35  ->  2025-07-08 14:46   (52,966 values)
+  Booked Slot Start Time               2024-10-01 07:30  ->  2025-02-27 08:30   (54,917 values)
+  Booked Slot End Time                 2024-10-01 16:00  ->  2025-02-27 20:30   (54,917 values)
+  Time of Cancellation                 2024-10-01 10:59  ->  2025-06-19 14:45   (11,790 values)
+  Mobile Booking Form: Created Date    2024-09-22 17:48  ->  2024-12-31 23:54   (54,917 values)
+======================================================================
+1. Work types — are placeholder jobs real customer demand?
+======================================================================
+Work Type: Work Type Name
+Tyre Fitting - Request    54921
+Manual Placeholder Job     4114
+Inspect & Fit [4.5]         299
+Inspect & Fit [2]           248
+Inspect & Fit [2.5]         223
+Inspect & Fit [3]           177
+Inspect & Fit [6]           158
+Inspect & Fit [9.5]          81
+
+Placeholder rows: 4,114
+  with a postcode:   0.2%
+  with a vehicle reg:0.0%
+  status mix:
+Status
+Completed         4075
+CannotComplete      35
+Canceled             3
+Dispatched           1
+
+For contrast, real tyre-fitting jobs:
+  with a postcode:   100.0%
+  with a vehicle reg:100.0%
+======================================================================
+2. DurationType — does the unit match the value?
+======================================================================
+                count   mean    std   min    25%    50%    75%    max
+DurationType                                                         
+Hours          1223.0  228.9  121.1  30.0  150.0  180.0  270.0  570.0
+Minutes       59046.0   34.0   10.8   2.0   26.5   29.5   38.0  146.0
+
+Work types among the rows marked 'Hours':
+                           size  median
+Work Type: Work Type Name              
+Inspect & Fit [2.5]         223   150.0
+Inspect & Fit [2]           238   120.0
+Inspect & Fit [3.5]           3   210.0
+Inspect & Fit [3]           177   180.0
+Inspect & Fit [4.5]         299   270.0
+Inspect & Fit [4]            16   240.0
+Inspect & Fit [5.5]          10   330.0
+Inspect & Fit [5]             7   300.0
+Inspect & Fit [6.5]           2   390.0
+Inspect & Fit [6]           157   360.0
+Inspect & Fit [8.5]           5   510.0
+Inspect & Fit [9.5]          81   570.0
+Manual Placeholder Job        1    60.0
+Tyre Fitting                  1    60.0
+Tyre Fitting - Request        3    60.0
+======================================================================
+3. ActualDuration — are there jobs nobody closed?
+======================================================================
+count    52979.0
+mean        41.4
+std        131.0
+min          0.0
+25%         19.0
+50%         29.0
+75%         42.0
+max       8922.0
+  longer than   120 minutes: 1,611
+  longer than   240 minutes:   615
+  longer than   480 minutes:   277
+  longer than 1,440 minutes:    45
+Cleaning decisions:
+
+       2  Header rows inside the data
+       0  Duplicate appointment numbers
+   4,114  Manual Placeholder Job records
+   1,259  Appointment Date missing
+   9,099  Dated outside 8 Oct-22 Dec 2024
+   1,223  DurationType labelled 'Hours'
+     871  Implausible ActualDuration
+
+======================================================================
+                          issue                                  decision  rows_affected
+    Header rows inside the data                                   Dropped              2
+  Duplicate appointment numbers                               None remain              0
+ Manual Placeholder Job records             Flagged, excluded from demand           4114
+       Appointment Date missing Filled from Actual Start / SchedStartTime           1259
+Dated outside 8 Oct-22 Dec 2024        Flagged, excluded from demand only           9099
+  DurationType labelled 'Hours'     No change - column is already minutes           1223
+     Implausible ActualDuration        Flagged, blanked in duration_clean            871
+======================================================================
+
+Effect on average job duration:
+  before flagging: 41.4 min
+  after flagging:  34.4 min
+  median (either): 29 min
+
+Rows: 60,269 total
+  real customer jobs:        56,155
+  in the demand window:      47,747
+customer_territory not matching G<N>- prefix: 148
+customer_territory
+Suspended           142
+Suspended-Irvine      6
+Name: count, dtype: int64
+joined, still 60,269 rows
+  no technician matched: 0
+  no territory matched:  4,649
+
+================================================================================
+FINAL CLEANING AUDIT
+================================================================================
+
+Operational appointments: 47,747
+
+1. LEAD-TIME DATA QUALITY
+Missing lead bands: 616
+Already missing in input parquet: 616
+Numeric conversion failures: 0
+Numeric values outside category bins: 0
+
+Work types among missing lead times:
+Work Type: Work Type Name
+Inspect & Fit [4.5]       232
+Inspect & Fit [6]         135
+Inspect & Fit [2]          86
+Inspect & Fit [9.5]        68
+Inspect & Fit [3]          55
+Inspect & Fit [4]          11
+Inspect & Fit [2.5]         8
+Inspect & Fit [5]           6
+Inspect & Fit [8.5]         5
+Tyre Fitting - Request      4
+
+Statuses among missing lead times:
+Status
+Completed         591
+CannotComplete     13
+Dispatched          7
+InProgress          4
+NaN                 1
+
+2. APPOINTMENT DATE SOURCES
+effective_date_source
+Appointment Date    47173
+Actual Start          564
+SchedStartTime         10
+
+3. TERRITORY DATA QUALITY
+Missing customer territory: 336
+Missing technician home territory: 0
+Unknown own-territory comparison: 336
+Missing/unmapped region: 468
+
+4. PLANNED DURATION DATA QUALITY
+Missing, zero or negative planned durations: 0
+
+5. APPOINTMENT STATUS DISTRIBUTION
+Status
+Completed         38526
+CannotComplete     6292
+Canceled           2916
+Dispatched            7
+InProgress            5
+NaN                   1
+
+All final cleaning audit checks passed.
+
+Saved appointments.parquet  (60,269 rows, 71 cols)
+
+Analysis base (real jobs, Oct-Dec): 47,747
+  failure rate      : 19.3%
+  regions covered   : 6
+  territories        : 71
+  technicians active : 158
+
+Failure ownership:
+failure_owner
+Customer         3865
+Stock            2963
+Resource         1682
+Booking admin     483
+Not recorded      215

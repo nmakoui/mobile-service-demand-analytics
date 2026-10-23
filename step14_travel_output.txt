@@ -1,0 +1,17 @@
+
+================================================================================
+TECHNICIAN-DAY AND EXPLORATORY MOVEMENT CHECK
+================================================================================
+Observed technician-days: 6,649
+Days with at least one observed geographic leg: 6,285
+Days without an observable geographic leg: 364
+Median straight-line distance on days with observed legs: 70.9 km
+
+LIMITATIONS:
+Straight-line distances are not road distances.
+Journeys from or to a technician's base are not included.
+Appointments lacking valid coordinates or recorded starts cannot contribute to the observed geographic legs.
+The assumed 30 km/h speed is illustrative only.
+Booked job hours are planned workload, not actual technician working hours.
+
+All technician-day checks passed.

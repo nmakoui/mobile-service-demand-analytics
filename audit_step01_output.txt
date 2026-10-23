@@ -1,0 +1,137 @@
+
+=== 1. PROJECT FILES ===
+audit_step01.py  (0.00 MB)
+data\processed\appointments.parquet  (8.23 MB)
+data\processed\sa_raw.parquet  (7.09 MB)
+data\processed\tech_raw.parquet  (0.02 MB)
+data\processed\terr_raw.parquet  (0.02 MB)
+data\raw\Tech.xlsx  (0.04 MB)
+data\raw\Terr.csv  (0.10 MB)
+outputs\powerbi\dim_technician.csv  (0.02 MB)
+outputs\powerbi\dim_territory.csv  (0.00 MB)
+outputs\powerbi\fact_appointments.csv  (7.79 MB)
+outputs\powerbi\fact_technician_day.csv  (0.82 MB)
+outputs\powerbi\KwikFit.pbix  (1.89 MB)
+outputs\tables\cleaning_log.csv  (0.00 MB)
+outputs\tables\demand_by_territory.csv  (0.00 MB)
+outputs\tables\first_time_fix.csv  (0.52 MB)
+outputs\tables\forecast_dow_naive.csv  (0.00 MB)
+outputs\tables\model_coefficients.csv  (0.00 MB)
+outputs\tables\model_results.csv  (0.00 MB)
+outputs\tables\opportunity_loss_anatomy.csv  (0.00 MB)
+outputs\tables\region_supply_demand.csv  (0.00 MB)
+outputs\tables\technician_workload.csv  (0.01 MB)
+outputs\tables\territory_capacity.csv  (0.01 MB)
+outputs\tables\territory_effective.csv  (0.00 MB)
+outputs\tables\travel_by_tech_day.csv  (0.82 MB)
+README.md  (0.00 MB)
+src\00_convert.py  (0.00 MB)
+src\01_clean.py  (0.01 MB)
+src\02_demand.py  (0.01 MB)
+src\03_capacity.py  (0.01 MB)
+src\04_opportunity_loss.py  (0.01 MB)
+src\05_model.py  (0.01 MB)
+src\06_recommendation.py  (0.00 MB)
+src\07_travel.py  (0.00 MB)
+src\08_first_time_fix.py  (0.00 MB)
+src\09_forecast.py  (0.00 MB)
+src\10_charts.py  (0.00 MB)
+src\11_star_schema.py  (0.00 MB)
+
+=== 2. CSV DATASET COLUMNS ===
+
+FILE: data\raw\Terr.csv
+COLUMNS: District, Region, Territory1, Restricted Territory name
+
+FILE: outputs\powerbi\dim_technician.csv
+COLUMNS: TechnicianKey, TechName, HomeTerritory, BaseCentre, BaseCentrePostcode, WorkingHoursPattern, HomeRegion
+
+FILE: outputs\powerbi\dim_territory.csv
+COLUMNS: TerritoryKey, Region, RestrictionStatus, TerritoryName
+
+FILE: outputs\powerbi\fact_appointments.csv
+COLUMNS: AppointmentId, TechnicianKey, TerritoryKey, DateKey, Status, Failed, FailureOwner, FailureReason, PlannedMinutes, LeadTimeDays, LeadBand, BookedHour, IsRetail, WorkType, OwnTerritory, SuspendedDistrict, VRN, Attended, RepeatVisit, RepeatMinutes
+
+FILE: outputs\powerbi\fact_technician_day.csv
+COLUMNS: TechnicianKey, DateKey, jobs, job_minutes, travel_km, travel_minutes, job_hours, travel_hours, total_hours, travel_share
+
+FILE: outputs\tables\cleaning_log.csv
+COLUMNS: issue, decision, rows_affected, note
+
+FILE: outputs\tables\demand_by_territory.csv
+COLUMNS: region, customer_territory, jobs, planned_min, hours, avg_job_min, rank_jobs, rank_hours, rank_move
+
+FILE: outputs\tables\first_time_fix.csv
+COLUMNS: Id, failure_owner, Sub_Categories__c, repeat_visit, repeat_minutes
+
+FILE: outputs\tables\forecast_dow_naive.csv
+COLUMNS: effective_date, jobs, dow, forecast, error, abs_error, pct_error
+
+FILE: outputs\tables\model_coefficients.csv
+COLUMNS: , 0
+
+FILE: outputs\tables\model_results.csv
+COLUMNS: target, base_rate, AUC, top10pct_precision, lift
+
+FILE: outputs\tables\opportunity_loss_anatomy.csv
+COLUMNS: failure_owner, appointments, attended, booked_min, attended_pct, booked_hours, attended_hours
+
+FILE: outputs\tables\region_supply_demand.csv
+COLUMNS: region, on_roster, active, jobs, planned_min, tech_days, hours, jobs_per_active_tech, hours_per_active_tech, jobs_per_tech_day, hours_per_tech_day, avg_job_min, rank_jobs, rank_hours, inactive_pct
+
+FILE: outputs\tables\technician_workload.csv
+COLUMNS: ServiceResourceId, jobs, days, planned_min, territories, hours, jobs_per_day, hours_per_day, Working Hours, Territory
+
+FILE: outputs\tables\territory_capacity.csv
+COLUMNS: customer_territory, demand_jobs, demand_hours, techs, tech_days, delivered_jobs, delivered_hours, jobs_per_tech_day, hours_per_tech_day, days_per_tech, hours_per_tech, coverage
+
+FILE: outputs\tables\territory_effective.csv
+COLUMNS: customer_territory, demand_jobs, demand_min, techs_assigned, techs_serving, demand_hours, tech_days_in_territory, hours_per_serving_tech, own_territory_rate
+
+FILE: outputs\tables\travel_by_tech_day.csv
+COLUMNS: ServiceResourceId, effective_date, jobs, job_minutes, travel_km, travel_minutes, job_hours, travel_hours, total_hours, travel_share
+
+=== 3. POTENTIALLY MISLEADING METRICS ===
+audit_step01.py:67: r"coverage|slack|utili[sz]ation|"
+src\01_clean.py:323: sa["own_territory"] = sa["tech_territory"] == sa["customer_territory"]
+src\03_capacity.py:50: # --- Capacity delivered, by the technician's OWN territory ------------
+src\03_capacity.py:51: # A "technician-day" is one technician working on one date. It is the
+src\03_capacity.py:92: view["coverage"] = (view["delivered_hours"] / view["demand_hours"]).round(2)
+src\03_capacity.py:119: print(f"technician-days worked  : {len(work.drop_duplicates(['ServiceResourceId', 'effective_date'])):,}")
+src\03_capacity.py:139: # technician-days actually spent working in that territory
+src\03_capacity.py:155: effective["own_territory_rate"] = (
+src\03_capacity.py:161: "tech_days_in_territory", "hours_per_serving_tech", "own_territory_rate"]
+src\03_capacity.py:171: print("LOWEST OWN-TERRITORY RATE  (served mostly from outside)")
+src\03_capacity.py:174: .sort_values("own_territory_rate")[cols].head(10).to_string())
+src\04_opportunity_loss.py:104: lost_hours = lost["planned_minutes"].sum() / 60
+src\04_opportunity_loss.py:117: print(f"booked hours on those visits         : {lost_hours:,.0f}")
+src\04_opportunity_loss.py:118: print(f"\nmedian hours worked per technician-day : {hours_per_tech_day:.2f}")
+src\04_opportunity_loss.py:119: print(f"equivalent technician-days             : {lost_hours / hours_per_tech_day:,.0f}")
+src\04_opportunity_loss.py:122: f"{lost_hours / hours_per_tech_day / median_days:.1f}")
+src\04_opportunity_loss.py:123: print(f"\ntechnician-days worked in total       : {all_tech_days:,}")
+src\04_opportunity_loss.py:125: f"{lost_hours / hours_per_tech_day / all_tech_days:.1%}")
+src\04_opportunity_loss.py:131: lost_visits=("Id", "size"), lost_hours=("planned_minutes", lambda s: s.sum() / 60)
+src\04_opportunity_loss.py:140: region_loss["lost_hours"] / region_loss["hours"] * 100
+src\05_model.py:43: jobs["own_terr"] = jobs["own_territory"].astype(int)
+src\06_recommendation.py:65: gap_ftf = gap.merge(ftf[["Id", "repeat_visit", "repeat_minutes"]], on="Id", how="left")
+src\06_recommendation.py:66: repeat_rate = gap_ftf["repeat_visit"].mean()
+src\06_recommendation.py:69: print(f"\n{gap_ftf['repeat_visit'].sum():,.0f} of these {len(gap):,} wasted visits "
+src\06_recommendation.py:71: print(f"Hours on those repeat visits: {repeat_hours:,.0f}")
+src\06_recommendation.py:81: print(f"technician-days: {gap_days:,.0f}")
+src\07_travel.py:46: print(f"Technician-days with coordinates: {len(tech_day):,}")
+src\08_first_time_fix.py:40: scoreable["repeat_visit"] = scoreable["repeat_date"].notna()
+src\08_first_time_fix.py:43: print(f"Repeat-visit rate: {scoreable['repeat_visit'].mean():.1%}")
+src\08_first_time_fix.py:45: print(scoreable.groupby("failure_owner")["repeat_visit"].agg(["size","mean"]).round(3).to_string())
+src\08_first_time_fix.py:47: scoreable[["Id","failure_owner","Sub_Categories__c","repeat_visit","repeat_minutes"]].to_csv(
+src\10_charts.py:50: # --- Chart 2: Region scatter — who's stretched, who's slack -----------
+src\10_charts.py:62: ax.set_title("Groups 3 and 4 carry the heaviest load per technician;\nGroup 5 has the most slack",
+src\11_star_schema.py:29: "Is Retail", "Work Type: Work Type Name", "own_territory",
+src\11_star_schema.py:38: "own_territory": "OwnTerritory", "suspended_district": "SuspendedDistrict",
+src\11_star_schema.py:45: ftf = pd.read_csv(ftf_path)[["Id", "repeat_visit", "repeat_minutes"]].rename(
+src\11_star_schema.py:46: columns={"Id": "AppointmentId", "repeat_visit": "RepeatVisit", "repeat_minutes": "RepeatMinutes"}
+src\11_star_schema.py:50: print("first_time_fix.csv not found - run 08_first_time_fix.py first for the repeat-visit columns.")
+src\11_star_schema.py:81: # --- Fact_TechnicianDay (grain: technician x date — a second, smaller fact) ---
+src\11_star_schema.py:87: tech_day.to_csv(PBI / "fact_technician_day.csv", index=False)
+src\11_star_schema.py:88: print(f"Fact_TechnicianDay: {len(tech_day):,} rows")
+
+=== AUDIT COMPLETE ===

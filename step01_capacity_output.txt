@@ -1,0 +1,79 @@
+Roster: 199 technicians
+  worked at least one job: 158
+  no jobs at all:          41
+
+Inactive technicians by territory:
+Territory
+G3-08-Birmingham           4
+G5-11-Reading & Slough     4
+G2-15-Chester              2
+G2-14-Bromborough          2
+G6-03-Colchester           2
+G3-03-Burton On Trent      2
+G3-05-Leicester            2
+G2-13-Liverpool            2
+G1-10-Glasgow              2
+G4-04-Plymouth & Exeter    2
+G5-12-London South West    2
+G3-06-Coventry             2
+
+territories affected: 25 of 68
+
+==============================================================================================================
+HIGHEST DEMAND PER ACTIVE HOME-BASED TECHNICIAN (DIAGNOSTIC)
+==============================================================================================================
+                              demand_jobs  demand_hours  active_home_technicians  home_tech_days  jobs_by_home_technicians  hours_by_home_technicians  jobs_per_home_tech_day  hours_per_home_tech_day  days_per_home_technician  demand_hours_per_active_home_technician
+customer_territory                                                                                                                                                                                                                                                       
+G3-05-Leicester                       791        1184.0                      2.0            91.0                     616.0                      447.0                     6.8                      4.9                      46.0                                    592.0
+G5-11-Reading & Slough               1180         702.0                      2.0            63.0                     587.0                      348.0                     9.3                      5.5                      32.0                                    351.0
+G3-07-Leamington Spa                  469         289.0                      1.0            54.0                     359.0                      247.0                     6.6                      4.6                      54.0                                    289.0
+G6-07-Cambridge                       424         272.0                      1.0            44.0                     322.0                      212.0                     7.3                      4.8                      44.0                                    272.0
+G5-14-London Central                  508         271.0                      1.0            43.0                     326.0                      178.0                     7.6                      4.1                      43.0                                    271.0
+G5-08-Maidstone & Gillingham          911         541.0                      2.0            82.0                     562.0                      321.0                     6.9                      3.9                      41.0                                    270.5
+G4-01-Swindon                         440         269.0                      1.0            33.0                     335.0                      203.0                    10.2                      6.2                      33.0                                    269.0
+G2-06-Huddersfield                    791         527.0                      2.0            68.0                     573.0                      336.0                     8.4                      4.9                      34.0                                    263.5
+G5-13-London North West               444         261.0                      1.0            51.0                     372.0                      214.0                     7.3                      4.2                      51.0                                    261.0
+G3-10-Hereford & Gloucester           792         471.0                      2.0            70.0                     642.0                      380.0                     9.2                      5.4                      35.0                                    235.5
+G3-11-Oxford                          763         460.0                      2.0            89.0                     744.0                      458.0                     8.4                      5.1                      44.0                                    230.0
+G1-15-Thornaby                        770         459.0                      2.0           106.0                     827.0                      498.0                     7.8                      4.7                      53.0                                    229.5
+G6-06-Peterborough                    461         458.0                      2.0            92.0                     492.0                      479.0                     5.3                      5.2                      46.0                                    229.0
+G3-01-Telford                         355         225.0                      1.0            53.0                     393.0                      246.0                     7.4                      4.6                      53.0                                    225.0
+G6-03-Colchester                     1145         662.0                      3.0           105.0                     799.0                      462.0                     7.6                      4.4                      35.0                                    220.7
+
+==============================================================================================================
+LOWEST DEMAND PER ACTIVE HOME-BASED TECHNICIAN (DIAGNOSTIC)
+==============================================================================================================
+                          demand_jobs  demand_hours  active_home_technicians  home_tech_days  jobs_by_home_technicians  hours_by_home_technicians  jobs_per_home_tech_day  hours_per_home_tech_day  days_per_home_technician  demand_hours_per_active_home_technician
+customer_territory                                                                                                                                                                                                                                                   
+G5-07-Whitstable                  248         135.0                      1.0            40.0                     232.0                      127.0                     5.8                      3.2                      40.0                                    135.0
+G6-08-Luton & Letchworth          964         531.0                      4.0           171.0                    1277.0                      728.0                     7.5                      4.3                      43.0                                    132.8
+G2-11-Manchester                 1740         961.0                      8.0           238.0                    2187.0                     1224.0                     9.2                      5.1                      30.0                                    120.1
+G3-06-Coventry                    786         470.0                      4.0           171.0                     882.0                      940.0                     5.2                      5.5                      43.0                                    117.5
+G6-02-CHELMSFORD                  422         230.0                      2.0            95.0                     590.0                      322.0                     6.2                      3.4                      48.0                                    115.0
+G5-16-London North East          1208         671.0                      6.0           234.0                    1840.0                     1055.0                     7.9                      4.5                      39.0                                    111.8
+G3-03-Burton On Trent             173         100.0                      1.0            49.0                     226.0                      194.0                     4.6                      4.0                      49.0                                    100.0
+G5-02-Andover                     163          97.0                      1.0            50.0                     395.0                      230.0                     7.9                      4.6                      50.0                                     97.0
+G6-05-Kings Lynn                  150          88.0                      1.0            45.0                     224.0                      132.0                     5.0                      2.9                      45.0                                     88.0
+G2-02-Hull                         78          46.0                      1.0            54.0                     360.0                      221.0                     6.7                      4.1                      54.0                                     46.0
+Traceback (most recent call last):
+  File "C:\Users\amaku\kwikfit-analysis\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3641, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 168, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 197, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7668, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7676, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'techs'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\amaku\kwikfit-analysis\src\03_capacity.py", line 157, in <module>
+    orphan = view[view["techs"].isna() & view["demand_jobs"].notna()]
+                  ~~~~^^^^^^^^^
+  File "C:\Users\amaku\kwikfit-analysis\.venv\Lib\site-packages\pandas\core\frame.py", line 4378, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\amaku\kwikfit-analysis\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3648, in get_loc
+    raise KeyError(key) from err
+KeyError: 'techs'

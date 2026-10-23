@@ -1,0 +1,27 @@
+,0
+cat__work_type_grp_Inspect & Fit,-1.919610296197383
+cat__is_retail_str_True,-0.7415469701267117
+cat__working_hours_Mobile 6 – Normal,-0.4990326818983206
+cat__region_Group 4,-0.40622967329582615
+cat__is_retail_str_False,-0.3668050869048007
+cat__scheduled_dow_Tuesday,-0.35090887933842263
+cat__scheduled_dow_Thursday,-0.23822601990947953
+cat__working_hours_Mobile 7,-0.23818325748334
+cat__working_hours_Standard,-0.23552914243099615
+cat__region_Group 2,-0.22855559380829105
+cat__scheduled_dow_Wednesday,-0.22294049357876464
+cat__region_Group 1,-0.1787365628914886
+cat__scheduled_dow_Friday,-0.17631790896899124
+cat__scheduled_dow_Monday,-0.15856010896242748
+cat__working_hours_Mobile 6 - Alternating,-0.13560697521876133
+cat__region_Group 3,-0.1273961472004639
+cat__region_Group 6,-0.09365002422055516
+cat__region_Group 5,-0.0737840556149064
+cat__work_type_grp_infrequent_sklearn,-0.0375298804496215
+cat__scheduled_dow_Sunday,-0.007590677618464558
+num__Number of Tyres,0.010484579125511373
+num__booked_hour,0.02733993656981133
+cat__scheduled_dow_Saturday,0.04619203134500057
+num__planned_minutes,0.07302165933774937
+num__Lead Time,0.17838812238330407
+cat__work_type_grp_Tyre Fitting - Request,0.8487881196156071

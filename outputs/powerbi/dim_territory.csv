@@ -1,0 +1,72 @@
+TerritoryKey,Region,RestrictionStatus,TerritoryName
+G5-16-London North East,Group 5,-,London North East
+G3-11-Oxford,Group 3,-,Oxford
+G5-13-London North West,Group 5,-,London North West
+G6-08-Luton & Letchworth,Group 6,-,Luton & Letchworth
+G3-08-Birmingham,Group 3,-,Birmingham
+G2-11-Manchester,Group 2,-,Manchester
+G2-10-Bolton,Group 2,-,Bolton
+G3-02-Staffordshire North,Group 3,-,Staffordshire North
+G2-04-Sheffield & Doncaster,Group 2,-,Sheffield & Doncaster
+G1-10-Glasgow,Group 1,-,Glasgow
+G5-09-Crawley & Dorking,Group 5,-,Crawley & Dorking
+G6-03-Colchester,Group 6,-,Colchester
+G2-06-Huddersfield,Group 2,-,Huddersfield
+G2-13-Liverpool,Group 2,-,Liverpool
+G5-11-Reading & Slough,Group 5,-,Reading & Slough
+G5-03-Southhampton,Group 5,-,Southhampton
+G4-02-Bristol,Group 4,-,Bristol
+G1-03-Belfast And Lisburn,Group 1,-,Belfast And Lisburn
+G2-07-Rochdale,Group 2,-,Rochdale
+G5-05-Eastbourne,Group 5,-,Eastbourne
+G4-04-Plymouth & Exeter,Group 4,"-G4-Exeter- Tue,Wed,Fri",Plymouth & Exeter
+G1-14-Newcastle,Group 1,-,Newcastle
+G5-14-London Central,Group 5,-,London Central
+G1-08-Edinburgh,Group 1,-,Edinburgh
+G1-05-Inverness-off,Group 1,-G1-AB-AB36/42+ (Weds Only),Inverness-off
+G1-05-Inverness,Group 1,-G1-AB - Gen (M/T/Th/F),Inverness
+G4-04-Carmarthen & Neath,Group 4,-,Carmarthen & Neath
+G3-12-Aylesbury & Hemel,Group 3,-,Aylesbury & Hemel
+G3-05-Leicester,Group 3,-,Leicester
+G1-13-CARLISLE,Group 1,"-G1-CARLISLE CA7, CA13-28 - Tue & Fri",CARLISLE
+G3-07-Leamington Spa,Group 3,-,Leamington Spa
+G6-02-CHELMSFORD,Group 6,-,CHELMSFORD
+G2-12-Warrington,Group 2,-,Warrington
+G6-09-Milton Keynes,Group 6,-,Milton Keynes
+G3-03-Burton On Trent,Group 3,-,Burton On Trent
+G4-03-Cardiff,Group 4,-,Cardiff
+G3-09-Wednesbury,Group 3,-,Wednesbury
+G6-07-Cambridge,Group 6,-,Cambridge
+G5-15-London South East,Group 5,-,London South East
+G5-12-London South West,Group 5,-,London South West
+G2-03-Wakefield,Group 2,-,Wakefield
+G2-02-Hull,Group 2,-,Hull
+G3-10-Hereford & Gloucester,Group 3,-,Hereford & Gloucester
+G1-15-Thornaby,Group 1,-,Thornaby
+Suspended,,Suspended,Suspended
+G1-01-Coleraine,Group 1,-,Coleraine
+G1-02-Ballymena,Group 1,-,Ballymena
+G2-01-York,Group 2,-,York
+G5-04-Bognor Regis,Group 5,-,Bognor Regis
+G5-06-Ashford,Group 5,-,Ashford
+G5-01-Bournemouth,Group 5,-,Bournemouth
+G5-08-Maidstone & Gillingham,Group 5,-,Maidstone & Gillingham
+G4-01-Swindon,Group 4,-,Swindon
+G1-04-Portadown,Group 1,-,Portadown
+G2-09-Blackpool,Group 2,-,Blackpool
+G5-02-Andover,Group 5,G5-02-Andover,Andover
+G2-08-Blackburn & Nelson,Group 2,-,Blackburn & Nelson
+G1-06-Dundee,Group 1,-,Dundee
+G3-06-Coventry,Group 3,-,Coventry
+G2-14-Bromborough,Group 2,-,Bromborough
+G2-05-Lincoln,Group 2,-,Lincoln
+G6-11-Wellingborough,Group 6,-,Wellingborough
+G2-15-Chester,Group 2,-,Chester
+G6-10-Northampton,Group 6,-,Northampton
+G3-01-Telford,Group 3,-,Telford
+G3-04-Mansfield & Nottingham,Group 3,-,Mansfield & Nottingham
+G6-06-Peterborough,Group 6,-,Peterborough
+G5-07-Whitstable,Group 5,-,Whitstable
+G6-01-Harlow,Group 6,-,Harlow
+G6-05-Kings Lynn,Group 6,-,Kings Lynn
+Suspended-Irvine,,Suspended,Suspended-Irvine

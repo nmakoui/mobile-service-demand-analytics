@@ -1,0 +1,55 @@
+MODEL POPULATION CHECK
+Operational appointments: 47,747
+Appointments included in model: 47,266
+Excluded from model: 481
+train 33,090 (Oct-Nov)   test 14,176 (Dec)
+failure rate   train 18.4%   test 21.3%
+This is a retrospective time-based test. Differences in failure rates between periods may affect performance.
+
+==============================================================================
+HOW GOOD IS IT?
+==============================================================================
+AUC: 0.580
+AUC evaluates discrimination between failed and non-failed appointments. Operational usefulness also depends on precision, calibration, intervention costs and capacity.
+
+==============================================================================
+RETROSPECTIVE DECEMBER RISK RANKING - FULL TEST PERIOD
+==============================================================================
+(December: 14,176 appointments over 22 days, baseline failure rate 21.3%)
+
+  top  5%     32 jobs/day  precision 32.8%  lift 1.54x  catches   8% of failures
+  top 10%     64 jobs/day  precision 33.0%  lift 1.55x  catches  15% of failures
+  top 20%    129 jobs/day  precision 30.3%  lift 1.42x  catches  28% of failures
+  top 30%    193 jobs/day  precision 27.8%  lift 1.31x  catches  39% of failures
+
+==============================================================================
+THE SAME MODEL, AIMED AT SPECIFIC FAILURE TYPES
+==============================================================================
+             target base_rate   AUC top10pct_precision  lift
+        any failure     21.3% 0.580              33.0%  1.55
+stock failure (any)      6.5% 0.603              10.3%  1.58
+wrong parts ordered      2.8% 0.531               2.5%  0.89
+
+MODEL INTERPRETATION: Performance should be assessed against the operational value of acting on predictions.
+Weak discrimination with the available features does not prove that failure is inherently unpredictable.
+A pre-dispatch readiness check is a practical alternative worth testing, especially for parts-dependent appointments.
+
+==============================================================================
+WHAT PUSHES RISK UP AND DOWN
+==============================================================================
+
+raises risk:
+cat__work_type_grp_Tyre Fitting - Request    0.849
+num__Lead Time                               0.178
+num__planned_minutes                         0.073
+cat__scheduled_dow_Saturday                  0.046
+num__booked_hour                             0.027
+num__Number of Tyres                         0.010
+
+lowers risk:
+cat__work_type_grp_Inspect & Fit       -1.920
+cat__is_retail_str_True                -0.742
+cat__working_hours_Mobile 6 – Normal   -0.499
+cat__region_Group 4                    -0.406
+cat__is_retail_str_False               -0.367
+cat__scheduled_dow_Tuesday             -0.351

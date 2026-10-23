@@ -1,0 +1,7 @@
+lead_band,appointments,failed_appointments,failure_rate_pct,share_of_all_appointments_pct
+Same day,5223,978,18.72,10.94
+Next day,10362,1451,14.0,21.7
+2-3 days,18047,3522,19.52,37.8
+4-7 days,11338,2636,23.25,23.75
+8+ days,2161,608,28.14,4.53
+Missing lead band,616,13,2.11,1.29

@@ -1,0 +1,294 @@
+===== 06_recommendation.py =====
+"""
+Phase 4, Step 2 — Size the recommendation.
+
+Run:  .venv\\Scripts\\python.exe src/06_recommendation.py
+"""
+# %%
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+pd.set_option("display.width", 200)
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+jobs["attended"] = jobs["Actual Start"].notna()
+
+# Match 04_opportunity_loss.py: only appointments that actually failed.
+# Without this, a handful of jobs carry a reason code but completed anyway,
+# and the two scripts report slightly different totals for the same thing.
+failed = jobs[jobs["failed"]].copy()
+
+hours_per_tech_day = (
+    jobs.groupby(["ServiceResourceId", "effective_date"])["planned_minutes"]
+    .sum().median() / 60
+)
+median_days = jobs.groupby("ServiceResourceId")["effective_date"].nunique().median()
+
+
+def as_people(hours):
+    """Translate hours into something a planning manager can picture."""
+    tech_days = hours / hours_per_tech_day
+    return tech_days, tech_days / median_days
+
+
+# %%
+# --- The benchmark already exists inside the business -----------------
+print("=" * 78)
+print("THE SAME PROBLEM, TWO DIFFERENT OUTCOMES")
+print("=" * 78)
+
+for reason in ["Tyres not in Stock", "Wrong parts ordered",
+               "Locking Wheel Nut Unavailable"]:
+    grp = failed[failed["Sub_Categories__c"] == reason]
+    caught = 1 - grp["attended"].mean()
+    print(f"{reason:<32} {len(grp):>5,} jobs   "
+          f"stopped before dispatch: {caught:>5.0%}")
+
+print("\nThe business already stops dispatch when it knows tyres are missing.")
+print("It does not when the wrong parts have been ordered.")
+
+# %%
+# --- What is sitting in the gap? --------------------------------------
+TARGET = ["Wrong parts ordered", "Locking Wheel Nut Unavailable"]
+gap = failed[failed["Sub_Categories__c"].isin(TARGET) & failed["attended"]]
+gap_hours = gap["planned_minutes"].sum() / 60
+ftf = pd.read_csv(TABLES / "first_time_fix.csv")
+gap_ftf = gap.merge(ftf[["Id", "repeat_visit", "repeat_minutes"]], on="Id", how="left")
+repeat_rate = gap_ftf["repeat_visit"].mean()
+repeat_hours = gap_ftf["repeat_minutes"].fillna(0).sum() / 60
+
+print(f"\n{gap_ftf['repeat_visit'].sum():,.0f} of these {len(gap):,} wasted visits "
+      f"({repeat_rate:.1%}) needed a second dispatch to the same vehicle within 60 days.")
+print(f"Hours on those repeat visits: {repeat_hours:,.0f}")
+print(f"True cost (first + repeat)  : {gap_hours + repeat_hours:,.0f} hours  "
+      f"(previously sized at {gap_hours:,.0f})")
+gap_days, gap_people = as_people(gap_hours)
+
+print("\n" + "=" * 78)
+print("DISCOVERED ONLY ON ARRIVAL")
+print("=" * 78)
+print(f"wasted visits  : {len(gap):,}")
+print(f"booked hours   : {gap_hours:,.0f}")
+print(f"technician-days: {gap_days:,.0f}")
+print(f"equivalent to  : {gap_people:.1f} technicians for the quarter")
+
+# %%
+# --- Scenarios, anchored on their own benchmark -----------------------
+benchmark = 1 - failed.loc[failed["Sub_Categories__c"] == "Tyres not in Stock",
+                           "attended"].mean()
+current = 1 - failed.loc[failed["Sub_Categories__c"].isin(TARGET),
+                         "attended"].mean()
+
+print("\n" + "=" * 78)
+print("IF THE CHECK WORKED AS WELL AS THE ONE THEY ALREADY RUN")
+print("=" * 78)
+print(f"currently stopped before dispatch : {current:.0%}")
+print(f"achieved on tyre stock            : {benchmark:.0%}\n")
+
+for label, catch in [
+    ("quarter of the way there", current + (benchmark - current) * 0.25),
+    ("half way there", current + (benchmark - current) * 0.50),
+    ("full parity with tyre stock", benchmark),
+]:
+    saved_hours = gap_hours * (catch - current) / (1 - current)
+    days, people = as_people(saved_hours)
+    print(f"  {label:<28} catch {catch:>4.0%}  "
+          f"saves {saved_hours:>5.0f} hours  "
+          f"{days:>4.0f} tech-days  {people:>4.1f} technicians")
+
+# %%
+# --- Keep the assumptions separate from the evidence ------------------
+print("\n" + "=" * 78)
+print("EVIDENCE  (measured in the data)")
+print("=" * 78)
+print(f"  {len(gap):,} visits where a technician travelled and the job could not be done")
+print(f"  {gap_hours:,.0f} booked hours on those visits")
+print(f"  {benchmark:.0%} of tyre-stock problems are already stopped before dispatch")
+print(f"  {current:.0%} of these two problems are")
+
+print("\n" + "=" * 78)
+print("ASSUMPTIONS  (not measured - stated so they can be challenged)")
+print("=" * 78)
+print("  1. A pre-dispatch check could reach the catch rate already achieved")
+print("     on tyre stock. Nothing proves this; it is the benchmark, not a promise.")
+print("  2. A prevented visit frees the whole booked slot. Conservative: it")
+print("     also frees the drive, which is not in this data.")
+print("  3. The quarter analysed is representative of a normal quarter.")
+print("     Only three months were supplied, so this cannot be verified.")===== 07_travel.py =====
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+
+geo = jobs.dropna(subset=["Latitude", "Longitude", "ServiceResourceId", "effective_date"]).copy()
+geo["order_time"] = geo["Booked Slot Start Time"].fillna(geo["Actual Start"])
+geo = geo.sort_values(["ServiceResourceId", "effective_date", "order_time"])
+
+def haversine_km(lat1, lon1, lat2, lon2):
+    R = 6371.0
+    lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
+    dlat, dlon = lat2 - lat1, lon2 - lon1
+    a = np.sin(dlat/2)**2 + np.cos(lat1)*np.cos(lat2)*np.sin(dlon/2)**2
+    return 2 * R * np.arcsin(np.sqrt(a))
+
+grp = geo.groupby(["ServiceResourceId", "effective_date"])
+geo["prev_lat"] = grp["Latitude"].shift()
+geo["prev_lon"] = grp["Longitude"].shift()
+geo["leg_km"] = haversine_km(geo["prev_lat"], geo["prev_lon"], geo["Latitude"], geo["Longitude"])
+
+ASSUMED_SPEED_KMH = 30  # stated assumption, not measured — label it as such on the slide
+geo["leg_minutes"] = geo["leg_km"] / ASSUMED_SPEED_KMH * 60
+
+tech_day = geo.groupby(["ServiceResourceId", "effective_date"]).agg(
+    jobs=("Id", "size"),
+    job_minutes=("planned_minutes", "sum"),
+    travel_km=("leg_km", "sum"),
+    travel_minutes=("leg_minutes", "sum"),
+).reset_index()
+tech_day["job_hours"] = tech_day["job_minutes"] / 60
+tech_day["travel_hours"] = tech_day["travel_minutes"] / 60
+tech_day["total_hours"] = tech_day["job_hours"] + tech_day["travel_hours"]
+tech_day["travel_share"] = (tech_day["travel_hours"] / tech_day["total_hours"]).round(3)
+
+print(f"Technician-days with coordinates: {len(tech_day):,}")
+print(tech_day[["jobs","job_hours","travel_hours","total_hours","travel_share"]]
+      .describe(percentiles=[0.1,0.25,0.5,0.75,0.9]).round(2).to_string())
+print(f"\nMedian travel km/day: {tech_day['travel_km'].median():.1f}")
+print(f"Median travel share : {tech_day['travel_share'].median():.1%}")
+
+tech_day.to_csv(TABLES / "travel_by_tech_day.csv", index=False)===== 10_charts.py =====
+"""
+Phase 5 — Four charts, each making one point.
+
+Run:  python src/10_charts.py
+"""
+from pathlib import Path
+import matplotlib.pyplot as plt
+import pandas as pd
+
+try:
+    ROOT = Path(__file__).resolve().parents[1]
+except NameError:
+    ROOT = Path.cwd()
+
+PROCESSED = ROOT / "data" / "processed"
+TABLES = ROOT / "outputs" / "tables"
+CHARTS = ROOT / "outputs" / "charts"
+CHARTS.mkdir(parents=True, exist_ok=True)
+
+sa = pd.read_parquet(PROCESSED / "appointments.parquet")
+jobs = sa[~sa["is_placeholder"] & sa["in_demand_window"]].copy()
+jobs["attended"] = jobs["Actual Start"].notna()
+
+def strip_spines(ax):
+    for s in ["top", "right"]:
+        ax.spines[s].set_visible(False)
+
+# --- Chart 1: Slope chart — Leicester's rank moves ---------------------
+demand = pd.read_csv(TABLES / "demand_by_territory.csv")
+top = demand.nsmallest(15, "rank_hours").copy()
+
+fig, ax = plt.subplots(figsize=(7, 8))
+for _, row in top.iterrows():
+    is_lei = "Leicester" in row["customer_territory"]
+    c = "#d62728" if is_lei else "#cccccc"
+    ax.plot([0, 1], [row["rank_jobs"], row["rank_hours"]], color=c,
+            linewidth=3 if is_lei else 1, zorder=3 if is_lei else 1, marker="o")
+    ax.text(-0.05, row["rank_jobs"], row["customer_territory"], ha="right", va="center",
+            fontsize=8, color="#d62728" if is_lei else "#888888",
+            fontweight="bold" if is_lei else "normal")
+ax.set_xlim(-0.6, 1.1)
+ax.set_xticks([0, 1]); ax.set_xticklabels(["Rank by bookings", "Rank by hours"], fontsize=11)
+ax.invert_yaxis(); ax.set_yticks([])
+ax.set_title("Leicester: 23rd busiest by bookings, 4th by workload", fontsize=13, fontweight="bold")
+for s in ["top", "right", "left"]: ax.spines[s].set_visible(False)
+plt.tight_layout()
+plt.savefig(CHARTS / "01_slope_leicester.png", dpi=200)
+plt.close(fig)
+
+# --- Chart 2: Region scatter — who's stretched, who's slack -----------
+reg = pd.read_csv(TABLES / "region_supply_demand.csv")
+highlight = {"Group 3": "#d62728", "Group 4": "#d62728", "Group 5": "#1f77b4"}
+
+fig, ax = plt.subplots(figsize=(7, 6))
+for _, row in reg.iterrows():
+    c = highlight.get(row["region"], "#999999")
+    ax.scatter(row["jobs_per_active_tech"], row["hours_per_active_tech"],
+               s=200, color=c, edgecolor="white", linewidth=1.5, zorder=3)
+    ax.annotate(row["region"], (row["jobs_per_active_tech"], row["hours_per_active_tech"]),
+                textcoords="offset points", xytext=(8, 4), fontsize=10)
+ax.set_xlabel("Jobs per active technician"); ax.set_ylabel("Hours per active technician")
+ax.set_title("Groups 3 and 4 carry the heaviest load per technician;\nGroup 5 has the most slack",
+             fontsize=12, fontweight="bold")
+strip_spines(ax)
+plt.tight_layout()
+plt.savefig(CHARTS / "02_region_scatter.png", dpi=200)
+plt.close(fig)
+
+# --- Chart 3: Benchmark bar — the same problem, two outcomes ----------
+failed = jobs[jobs["failed"]]
+reasons = ["Tyres not in Stock", "Wrong parts ordered", "Locking Wheel Nut Unavailable"]
+bench = []
+for r in reasons:
+    grp = failed[failed["Sub_Categories__c"] == r]
+    bench.append({"reason": r, "stopped_pct": (1 - grp["attended"].mean()) * 100, "n": len(grp)})
+bench = pd.DataFrame(bench).sort_values("stopped_pct", ascending=False)
+
+fig, ax = plt.subplots(figsize=(7, 5))
+colors = ["#2ca02c" if v >= 50 else "#d62728" for v in bench["stopped_pct"]]
+bars = ax.barh(bench["reason"], bench["stopped_pct"], color=colors)
+for bar, pct, n in zip(bars, bench["stopped_pct"], bench["n"]):
+    ax.text(bar.get_width() + 1.5, bar.get_y() + bar.get_height()/2,
+            f"{pct:.0f}%  (n={n:,})", va="center", fontsize=10)
+ax.set_xlim(0, 100); ax.set_xlabel("Stopped before dispatch (%)")
+ax.set_title("The business already catches missing tyres before dispatch.\nIt doesn't catch wrong parts.",
+             fontsize=12, fontweight="bold")
+strip_spines(ax)
+plt.tight_layout()
+plt.savefig(CHARTS / "03_benchmark_bar.png", dpi=200)
+plt.close(fig)
+
+# --- Chart 4: Lead-time bar — failure rate by booking lead time -------
+lead = jobs.groupby("lead_band", observed=True).agg(
+    appointments=("Id", "size"), failed=("failed", "sum")
+).reset_index()
+lead["failure_rate"] = lead["failed"] / lead["appointments"] * 100
+order = ["Same day", "Next day", "2-3 days", "4-7 days", "8+ days"]
+lead["lead_band"] = pd.Categorical(lead["lead_band"], categories=order, ordered=True)
+lead = lead.sort_values("lead_band")
+
+fig, ax = plt.subplots(figsize=(7, 5))
+colors = ["#999999"] * 4 + ["#d62728"]
+bars = ax.bar(lead["lead_band"].astype(str), lead["failure_rate"], color=colors)
+for bar, pct in zip(bars, lead["failure_rate"]):
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5, f"{pct:.1f}%",
+            ha="center", fontsize=10)
+ax.set_ylabel("Failure rate (%)")
+ax.set_title("Failure rate roughly doubles for jobs booked 8+ days out\nvs the next-day low",
+             fontsize=12, fontweight="bold")
+strip_spines(ax)
+plt.tight_layout()
+plt.savefig(CHARTS / "04_leadtime_bar.png", dpi=200)
+plt.close(fig)
+
+print("Saved 4 charts to outputs/charts/")

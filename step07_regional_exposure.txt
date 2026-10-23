@@ -1,0 +1,137 @@
+Appointments: 47,747
+Appointments flagged as failed: 9,208 (19.3%)
+
+================================================================================
+DID A TECHNICIAN ATTEND?
+================================================================================
+attended        False  True 
+Status                      
+Canceled         2835     81
+CannotComplete   2648   3644
+
+================================================================================
+RECORDED DURATION ON ATTENDED FAILURES
+================================================================================
+count    3556.0
+mean        5.4
+std         8.0
+min         3.0
+25%         5.0
+50%         5.0
+75%         5.0
+90%         5.0
+max       356.0
+
+Median, 75th and 90th percentile are the same value, so the system
+writes a fixed number rather than timing the visit. The booked slot
+is used below instead of this column.
+
+================================================================================
+WHERE THE LOSS COMES FROM
+================================================================================
+               appointments  attended  attended_pct  booked_hours  attended_hours
+failure_owner                                                                    
+Customer               3865      1290          33.0        2174.0           709.0
+Stock                  2963      1793          61.0        1826.0          1080.0
+Resource               1682       397          24.0        1000.0           235.0
+Booking admin           483       180          37.0         286.0           111.0
+Not recorded            215        65          30.0         142.0            49.0
+
+================================================================================
+CANCELLATION NOTICE - CALENDAR-DAY ANALYSIS
+================================================================================
+Total cancelled appointments: 2,916
+
+Cancellation notice distribution:
+       calendar_notice_category  appointments
+Recorded after appointment date            19
+          Same appointment date           950
+          1 calendar day before           646
+       2-3 calendar days before           701
+       4-7 calendar days before           521
+        8+ calendar days before            79
+           Missing/invalid date             0
+
+Cancelled on or recorded after appointment date: 969 (33.2%)
+
+Note: Calendar-day notice does not establish whether a cancelled appointment slot was refilled.
+Cancellation reconciliation passed.
+
+================================================================================
+Q4 - BOOKED-HOURS EXPOSURE FROM INTERNAL FAILURES
+================================================================================
+Appointments with internal failure owner: 5,128
+Internal failures with recorded Actual Start: 2,370
+Recorded-start rate among internal failures: 46.2%
+Booked hours across all internal failures: 3,111.7
+Booked hours on internal failures with recorded start: 1,426.3
+Share of national booked appointment hours: 4.77%
+Missing planned durations in this subset: 0
+
+INTERPRETATION:
+These are planned appointment hours associated with internal failures that have a recorded Actual Start.
+They do not represent confirmed wasted technician hours or recoverable resource capacity.
+
+All internal-failure validation checks passed.
+
+================================================================================
+REGIONAL BOOKED-HOURS EXPOSURE
+================================================================================
+         appointments  total_planned_hours  started_internal_failures  booked_hours_on_started_failures  exposure_pct_of_booked_hours
+region                                                                                                                               
+Group 1          8733              5743.01                        420                            253.05                          4.41
+Group 2         10347              6031.18                        506                            304.07                          5.04
+Group 3          7354              5076.95                        361                            231.08                          4.55
+Group 4          5516              3201.98                        214                            127.56                          3.98
+Group 5          9944              6254.21                        537                            307.96                          4.92
+Group 6          5385              3305.97                        301                            183.28                          5.54
+
+REGIONAL RECONCILIATION
+National internal failures with recorded start: 2,370
+Included in six regions: 2,339
+Excluded due to missing/unmapped region: 31
+Booked hours on excluded appointments: 19.32
+
+All regional exposure reconciliation checks passed.
+
+================================================================================
+BY DAY OF WEEK
+================================================================================
+           appointments  failed  lost_visits  failure_rate  lost_per_100
+dow                                                                     
+Monday             8541    1845          427          21.6           5.0
+Tuesday            8727    1569          404          18.0           4.6
+Wednesday          8741    1622          449          18.6           5.1
+Thursday           8502    1535          433          18.1           5.1
+Friday             8679    1672          445          19.3           5.1
+Saturday           2582     558          114          21.6           4.4
+Sunday             1975     407           98          20.6           5.0
+
+================================================================================
+STOCK FAILURES IN DETAIL
+================================================================================
+                                 appointments  attended  hours  attended_pct
+Sub_Categories__c                                                           
+Wrong parts ordered                      1390      1320  839.0          95.0
+Tyres not in Stock                       1182       160  766.0          14.0
+Locking Wheel Nut Unavailable             343       293  196.0          85.0
+Stock too far for pickup                   34        13   17.0          38.0
+Centre refused to release stock            14         7    9.0          50.0
+
+================================================================================
+FAILURE RATE BY BOOKING LEAD TIME
+================================================================================
+           appointments  failed  failure_rate
+lead_band                                    
+Same day           5223     978          18.7
+Next day          10362    1451          14.0
+2-3 days          18047    3522          19.5
+4-7 days          11338    2636          23.2
+8+ days            2161     608          28.1
+
+================================================================================
+APPOINTMENTS IN SUSPENDED DISTRICTS
+================================================================================
+appointments : 132
+failure rate : 31.8%  (national 19.3%)
+hours booked : 84
