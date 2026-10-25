@@ -1,5 +1,9 @@
 ﻿.venv/
-data/
 __pycache__/
-.ipynb_checkpoints/
-*.pyc
+.env
+data/
+*.parquet
+*.pbix
+*.zip
+outputs/powerbi/
+excel/*.xlsx
